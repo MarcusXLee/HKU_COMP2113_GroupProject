@@ -33,28 +33,7 @@ void runForestEvent(int eventId, Player &player) {
 
 
     else if (eventId == 2) {
-
-        cout << "Blessing of the God of Battle" << endl;
-        cout << "After wandering for a while, you discover a statue of the God of Battle." << endl;
-
-        cout << "1. Pray sincerely" << endl;
-        cout << "2. Reject the gods" << endl;
-
-        int choice;
-        cin >> choice;
-
-        if (choice == 1) {
-            cout << "You kneel and pray for strength to defeat your enemies and take revenge." << endl;
-            cout << "The God of Battle admires your courage and offers power in exchange for gold." << endl;
-
-            【function: changeGold(player, -20)】
-            【function: changeAttack(player, +1)】
-            【function: changeDefense(player, +1)】
-        }
-        else if (choice == 2) {
-            cout << "You believe gods are just illusions. Only your own strength matters." << endl;
-            cout << "Nothing happens." << endl;
-        }
+        runBattleGodBlessingEvent(player);
     }
 
     else if (eventId == 3) {
