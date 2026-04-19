@@ -107,121 +107,16 @@ void runForestEvent(int eventId, Player &player) {
 
 //event 5      
     else if (eventId == 5) {
-
-        cout << "Judgment of Good and Evil" << endl;
-        cout << "A statue of the God of Good and Evil stands in the middle of the road." << endl;
-        cout << "Every traveler must accept its judgment." << endl;
-
-        int kindness = 【function: getKindness(player)】;
-
-        if (kindness >= 5) {
-            cout << "Your kindness deserves a reward!" << endl;
-
-            【function: changeMaxHP(player, +5)】
-            【function: changeAttack(player, +1)】
-            【function: changeDefense(player, +1)】
-        }
-        else if (kindness > 0 && kindness < 5) {
-            cout << "Your kindness is worth encouraging!" << endl;
-
-            【function: changeMaxHP(player, +3)】
-        }
-        else if (kindness < 0 && kindness > -5) {
-            cout << "This is a warning!" << endl;
-
-            int r = rand() % 2;
-
-            if (r == 0) {
-                cout << "You lost 1 Attack." << endl;
-                【function: changeAttack(player, -1)】
-            }
-            else {
-                cout << "You lost 1 Defense." << endl;
-                【function: changeDefense(player, -1)】
-            }
-        }
-        else if (kindness <= -5) {
-            cout << "Your sins are unforgivable. Judgment must be carried out!" << endl;
-
-            【function: changeMaxHP(player, -5)】
-        }
-        else {
-            cout << "Nothing happens." << endl;
-        }
+        runJudgmentEvent(player);
     }
 
+        
 //event 6
     else if (eventId == 6) {
-
-        cout << "Wandering Merchant" << endl;
-        cout << "A wandering merchant offers many goods for sale." << endl;
-        cout << "Use your gold to make a choice." << endl;
-
-        cout << "1. Buy a weapon" << endl;
-        cout << "2. Buy an armor" << endl;
-        cout << "3. Rob the merchant" << endl;
-
-        int choice;
-        cin >> choice;
-
-        if (choice == 1) {
-            cout << "Choose your weapon:" << endl;
-            cout << "1. Cheap Weapon (-5 gold, +1 Attack)" << endl;
-            cout << "2. Fine Weapon (-15 gold, +2 Attack)" << endl;
-            cout << "3. Top Weapon (-25 gold, +3 Attack)" << endl;
-
-            int subChoice;
-            cin >> subChoice;
-
-            if (subChoice == 1) {
-                【function: changeGold(player, -5)】
-                【function: changeAttack(player, +1)】
-                cout << "You bought a cheap weapon." << endl;
-            }
-            else if (subChoice == 2) {
-                【function: changeGold(player, -15)】
-                【function: changeAttack(player, +2)】
-                cout << "You bought a fine weapon." << endl;
-            }
-            else if (subChoice == 3) {
-                【function: changeGold(player, -25)】
-                【function: changeAttack(player, +3)】
-                cout << "You bought a top weapon." << endl;
-            }
-        }
-        else if (choice == 2) {
-            cout << "Choose your armor:" << endl;
-            cout << "1. Cheap Armor (-5 gold, +1 Defense)" << endl;
-            cout << "2. Fine Armor (-15 gold, +2 Defense)" << endl;
-            cout << "3. Top Armor (-25 gold, +3 Defense)" << endl;
-
-            int subChoice;
-            cin >> subChoice;
-
-            if (subChoice == 1) {
-                【function: changeGold(player, -5)】
-                【function: changeDefense(player, +1)】
-                cout << "You bought a cheap armor." << endl;
-            }
-            else if (subChoice == 2) {
-                【function: changeGold(player, -15)】
-                【function: changeDefense(player, +2)】
-                cout << "You bought a fine armor." << endl;
-            }
-            else if (subChoice == 3) {
-                【function: changeGold(player, -25)】
-                【function: changeDefense(player, +3)】
-                cout << "You bought a top armor." << endl;
-            }
-        }
-        else if (choice == 3) {
-            cout << "You decide to rob the merchant!" << endl;
-
-            【function: enemy = createEnemy(merchant_id)】
-            【function: startBattle(player, enemy)】
-        }
+        runMerchantEvent(player);
     }
 
+        
 //event 7
     else if (eventId == 7) {
 
@@ -308,5 +203,121 @@ void runForestEvent(int eventId, Player &player) {
         }
     }
 
-  
+
+        // ========================
+    // Event 9: Senior Adventurer
+    // ========================
+    else if (eventId == 9) {
+
+        cout << "Senior Adventurer" << endl;
+        cout << "You meet a senior adventurer and decide to learn from them." << endl;
+
+        cout << "1. Balance of attack and defense" << endl;
+        cout << "2. Offense is the best defense" << endl;
+        cout << "3. Defense is the best offense" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "You learn a balanced fighting style." << endl;
+
+            【function: changeAttack(player, +1)】
+            【function: changeDefense(player, +1)】
+        }
+        else if (choice == 2) {
+            cout << "You focus entirely on offense." << endl;
+
+            【function: changeAttack(player, +3)】
+            【function: changeDefense(player, -1)】
+        }
+        else if (choice == 3) {
+            cout << "You focus entirely on defense." << endl;
+
+            【function: changeDefense(player, +3)】
+            【function: changeAttack(player, -1)】
+        }
+    }
+
+
+        
+// event 10
+    else if (eventId == 10) {
+
+        cout << "Backstab!" << endl;
+        cout << "The forest is pitch dark at night." << endl;
+        cout << "Before you can react, someone stabs you from behind!" << endl;
+
+        【function: damagePlayer(player, 2)】
+
+        cout << "You are hurt and immediately enter battle." << endl;
+
+        【function: enemy = createEnemy(thief_id)】
+        【function: startBattle(player, enemy)】
+    }
+
+
+// event 11
+        
+    else if (eventId == 11) {
+
+        cout << "Gambling House" << endl;
+        cout << "You accidentally enter a gambling house." << endl;
+        cout << "Do you want to take a chance?" << endl;
+
+        cout << "1. Small bet" << endl;
+        cout << "2. Big bet" << endl;
+        cout << "3. All in" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            int r = rand() % 100;
+
+            if (r < 25) {
+                cout << "You lost 1 gold." << endl;
+                【function: changeGold(player, -1)】
+            }
+            else if (r < 75) {
+                cout << "Nothing happens." << endl;
+            }
+            else {
+                cout << "You won 1 gold!" << endl;
+                【function: changeGold(player, +1)】
+            }
+        }
+        else if (choice == 2) {
+            int r = rand() % 100;
+
+            if (r < 25) {
+                cout << "You lost 5 gold." << endl;
+                【function: changeGold(player, -5)】
+            }
+            else if (r < 75) {
+                cout << "Nothing happens." << endl;
+            }
+            else {
+                cout << "You won 5 gold!" << endl;
+                【function: changeGold(player, +5)】
+            }
+        }
+        else if (choice == 3) {
+            int r = rand() % 100;
+
+            if (r < 25) {
+                cout << "You lost all your gold." << endl;
+                【function: loseAllGold(player)】
+            }
+            else if (r < 75) {
+                cout << "Nothing happens." << endl;
+            }
+            else {
+                cout << "You doubled your current gold!" << endl;
+                【function: doubleGold(player)】
+            }
+        }
+    }
+
+
 }
