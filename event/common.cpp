@@ -151,3 +151,38 @@ void runMerchantEvent(Player &player) {
         【function: startBattle(player, enemy)】
     }
 }
+
+
+// Hunting
+
+void runHuntingEvent(Player &player) {
+
+    cout << "Hunting" << endl;
+    cout << "An old hunter living in the forest invites you to go hunting with him." << endl;
+
+    cout << "1. Small prey" << endl;
+    cout << "2. Medium prey" << endl;
+    cout << "3. Large prey" << endl;
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        cout << "You decide to hunt small prey." << endl;
+
+        【function: enemy = createEnemy(rabbit_id)】
+        【function: startBattle(player, enemy)】
+    }
+    else if (choice == 2) {
+        cout << "You decide to hunt medium prey." << endl;
+
+        【function: enemy = createEnemy(dog_id)】
+        【function: startBattle(player, enemy)】
+    }
+    else if (choice == 3) {
+        cout << "You decide to hunt large prey." << endl;
+
+        【function: enemy = createEnemy(bear_id)】
+        【function: startBattle(player, enemy)】
+    }
+}
