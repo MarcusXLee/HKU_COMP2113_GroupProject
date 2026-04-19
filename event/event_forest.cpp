@@ -3,6 +3,7 @@ using namespace std;
 
 void runForestEvent(int eventId, Player &player) {
 
+//event 1    
     if (eventId == 1) {
 
         cout << "Goblin Robbery!" << endl;
@@ -31,11 +32,13 @@ void runForestEvent(int eventId, Player &player) {
         }
     }
 
-
+//event 2
     else if (eventId == 2) {
         runBattleGodBlessingEvent(player);
     }
 
+
+//event 3        
     else if (eventId == 3) {
 
         cout << "A Peaceful Village" << endl;
@@ -71,7 +74,7 @@ void runForestEvent(int eventId, Player &player) {
     }
 
 
-      
+//event 4      
     else if (eventId == 4) {
 
         cout << "Ruined Village" << endl;
@@ -102,7 +105,7 @@ void runForestEvent(int eventId, Player &player) {
     }
 
 
-      
+//event 5      
     else if (eventId == 5) {
 
         cout << "Judgment of Good and Evil" << endl;
@@ -147,7 +150,7 @@ void runForestEvent(int eventId, Player &player) {
         }
     }
 
-
+//event 6
     else if (eventId == 6) {
 
         cout << "Wandering Merchant" << endl;
@@ -219,7 +222,7 @@ void runForestEvent(int eventId, Player &player) {
         }
     }
 
-
+//event 7
     else if (eventId == 7) {
 
         cout << "Adventurer's Remains" << endl;
@@ -268,7 +271,7 @@ void runForestEvent(int eventId, Player &player) {
         }
     }
 
-
+//event 8
     else if (eventId == 8) {
 
         cout << "Forest Tiger" << endl;
