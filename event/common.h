@@ -7,5 +7,6 @@ void runBattleGodBlessingEvent(Player &player);
 void runHuntingEvent(Player &player);
 void runJudgmentEvent(Player &player);
 void runMerchantEvent(Player &player);
+void runGamblingEvent(Player &player);
 
 #endif
