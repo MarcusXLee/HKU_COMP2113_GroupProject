@@ -19,5 +19,10 @@ void runForestEvent(int eventId, Player &player) {
         runMerchantEvent(player);
     }
 
+//event 4
+    else if (eventId == 4) {
+       runGamblingEvent(player);
+   }
+
 
 }
