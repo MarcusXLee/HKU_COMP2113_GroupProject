@@ -186,3 +186,68 @@ void runHuntingEvent(Player &player) {
         【function: startBattle(player, enemy)】
     }
 }
+
+
+//Gambling House
+void runGamblingEvent(Player &player) {
+
+    cout << "Gambling House" << endl;
+    cout << "You accidentally enter a gambling house." << endl;
+    cout << "Do you want to take a gamble?" << endl;
+
+    cout << "1. Small bet" << endl;
+    cout << "2. Big bet" << endl;
+    cout << "3. All in" << endl;
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        int r = rand() % 100;
+
+        if (r < 25) {
+            cout << "You lost 1 gold." << endl;
+            【function: changeGold(player, -1)】
+        }
+        else if (r < 75) {
+            cout << "Nothing happens." << endl;
+        }
+        else {
+            cout << "You won 1 gold!" << endl;
+            【function: changeGold(player, +1)】
+        }
+    }
+
+    else if (choice == 2) {
+        int r = rand() % 100;
+
+        if (r < 25) {
+            cout << "You lost 5 gold." << endl;
+            【function: changeGold(player, -5)】
+        }
+        else if (r < 75) {
+            cout << "Nothing happens." << endl;
+        }
+        else {
+            cout << "You won 5 gold!" << endl;
+            【function: changeGold(player, +5)】
+        }
+    }
+
+    else if (choice == 3) {
+        int r = rand() % 100;
+
+        if (r < 25) {
+            cout << "You lost all your gold." << endl;
+            【function: loseAllGold(player)】
+        }
+        else if (r < 75) {
+            cout << "Nothing happens." << endl;
+        }
+        else {
+            cout << "You doubled your gold!" << endl;
+            【function: doubleGold(player)】
+        }
+    }
+
+}
