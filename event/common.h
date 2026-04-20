@@ -8,5 +8,6 @@ void runJudgmentEvent(Player &player);
 void runMerchantEvent(Player &player);
 void runGamblingEvent(Player &player);
 void runFoodCartEvent(Player &player);
+void runRevengeGodBlessingEvent(Player &player);
 
 #endif
