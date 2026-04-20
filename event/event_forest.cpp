@@ -257,65 +257,40 @@ void runForestEvent(int eventId, Player &player) {
     }
 
 
-// event 11
-        
+//event 11
     else if (eventId == 11) {
+       runGamblingEvent(player);
+   }
 
-        cout << "Gambling House" << endl;
-        cout << "You accidentally enter a gambling house." << endl;
-        cout << "Do you want to take a chance?" << endl;
-
-        cout << "1. Small bet" << endl;
-        cout << "2. Big bet" << endl;
-        cout << "3. All in" << endl;
-
+        
+// event 12
+        
+    else if (eventId == 12) {
+        cout << "Hunting" << endl;
+        cout << "An old hunter living in the forest invites you to go hunting with him." << endl;
+        cout << "1. Small prey" << endl;
+        cout << "2. Medium prey" << endl;
+        cout << "3. Large prey" << endl;
         int choice;
         cin >> choice;
 
         if (choice == 1) {
-            int r = rand() % 100;
+            cout << "You decide to hunt small prey." << endl;
 
-            if (r < 25) {
-                cout << "You lost 1 gold." << endl;
-                【function: changeGold(player, -1)】
-            }
-            else if (r < 75) {
-                cout << "Nothing happens." << endl;
-            }
-            else {
-                cout << "You won 1 gold!" << endl;
-                【function: changeGold(player, +1)】
-            }
+           【function: enemy = createEnemy(rabbit_id)】
+           【function: startBattle(player, enemy)】
         }
         else if (choice == 2) {
-            int r = rand() % 100;
+            cout << "You decide to hunt medium prey." << endl;
 
-            if (r < 25) {
-                cout << "You lost 5 gold." << endl;
-                【function: changeGold(player, -5)】
-            }
-            else if (r < 75) {
-                cout << "Nothing happens." << endl;
-            }
-            else {
-                cout << "You won 5 gold!" << endl;
-                【function: changeGold(player, +5)】
-            }
+           【function: enemy = createEnemy(dog_id)】
+           【function: startBattle(player, enemy)】
         }
         else if (choice == 3) {
-            int r = rand() % 100;
+            cout << "You decide to hunt large prey." << endl;
 
-            if (r < 25) {
-                cout << "You lost all your gold." << endl;
-                【function: loseAllGold(player)】
-            }
-            else if (r < 75) {
-                cout << "Nothing happens." << endl;
-            }
-            else {
-                cout << "You doubled your current gold!" << endl;
-                【function: doubleGold(player)】
-            }
+           【function: enemy = createEnemy(bear_id)】
+           【function: startBattle(player, enemy)】
         }
     }
 
