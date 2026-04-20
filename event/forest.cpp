@@ -361,5 +361,8 @@ void runForestEvent(int eventId, Player &player) {
        runFoodCartEvent(player);
    }
 
+//event 16
+    else if (eventId == 16) {
+       runFoodCartEvent(player);
     
 }
