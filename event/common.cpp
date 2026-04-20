@@ -153,40 +153,6 @@ void runMerchantEvent(Player &player) {
 }
 
 
-// Hunting
-
-void runHuntingEvent(Player &player) {
-
-    cout << "Hunting" << endl;
-    cout << "An old hunter living in the forest invites you to go hunting with him." << endl;
-
-    cout << "1. Small prey" << endl;
-    cout << "2. Medium prey" << endl;
-    cout << "3. Large prey" << endl;
-
-    int choice;
-    cin >> choice;
-
-    if (choice == 1) {
-        cout << "You decide to hunt small prey." << endl;
-
-        Enemy enemy = createEnemy(rabbit_id);//F and need modify
-        startBattle(player, enemy);
-    }
-    else if (choice == 2) {
-        cout << "You decide to hunt medium prey." << endl;
-
-        Enemy enemy = createEnemy(dog);////F and need modify
-        startBattle(player, enemy);
-    }
-    else if (choice == 3) {
-        cout << "You decide to hunt large prey." << endl;
-
-        Enemy enemy = createEnemy(bear);//F and need modify
-        startBattle(player, enemy);//F
-    }
-}
-
 
 //Gambling House
 void runGamblingEvent(Player &player) {
