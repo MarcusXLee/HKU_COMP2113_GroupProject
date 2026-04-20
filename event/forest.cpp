@@ -27,7 +27,7 @@ void runForestEvent(int eventId, Player &player) {
         else if (choice == 2) {
             cout << "You refuse to give up your gold and prepare to fight!" << endl;
 
-            enemy = createEnemy(1);//F
+            Enemy enemy = createEnemy(1);//F
             startBattle(player, enemy);//F
         }
     }
@@ -363,6 +363,6 @@ void runForestEvent(int eventId, Player &player) {
 
 //event 16
     else if (eventId == 16) {
-       runFoodCartEvent(player);
-    
+       runRevengeGodBlessingEvent(player);
+    }    
 }
