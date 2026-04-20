@@ -4,9 +4,9 @@
 #include "../player/player.h"
 
 void runBattleGodBlessingEvent(Player &player);
-void runHuntingEvent(Player &player);
 void runJudgmentEvent(Player &player);
 void runMerchantEvent(Player &player);
 void runGamblingEvent(Player &player);
+void runFoodCartEvent(Player &player);
 
 #endif
