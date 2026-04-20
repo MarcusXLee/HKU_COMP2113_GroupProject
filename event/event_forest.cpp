@@ -21,14 +21,14 @@ void runForestEvent(int eventId, Player &player) {
             cout << "You hand over half of your gold. "
                  << "The goblins leave happily and even call you a good person." << endl;
 
-            【function: changeGold(player, -5)】
-            【function: changeKindness(player, +1)】
+            changeGold(player, -5);//F
+            changeKindness(player, +1);//F
         }
         else if (choice == 2) {
             cout << "You refuse to give up your gold and prepare to fight!" << endl;
 
-            【function: enemy = createEnemy(1)】
-            【function: startBattle(player, enemy)】
+            enemy = createEnemy(1);//F
+            startBattle(player, enemy);//F
         }
     }
 
@@ -54,21 +54,21 @@ void runForestEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You decide to take a full day of rest." << endl;
 
-            【function: healPlayer(player, 30_percent_maxHP)】
+            healPlayer(player, getMaxHP(player) * 0.3);//F
         }
         else if (choice == 2) {
             cout << "You sneak into the blacksmith shop and steal a piece of equipment." << endl;
 
-            【function: changeKindness(player, -1)】
+            changeKindness(player, -1);//F
 
             int r = rand() % 2;
 
             if (r == 0) {
                 cout << "You gained +1 Attack." << endl;
-                【function: changeAttack(player, +1)】
+                changeAttack(player, +1);//F
             } else {
                 cout << "You gained +1 Defense." << endl;
-                【function: changeDefense(player, +1)】
+                changeDefense(player, +1);//F
             }
         }
     }
@@ -92,15 +92,15 @@ void runForestEvent(int eventId, Player &player) {
             cout << "You rob the helpless villagers and take their last coins." << endl;
             cout << "All you receive in return is their curse." << endl;
 
-            【function: changeKindness(player, -3)】
-            【function: changeGold(player, +5)】
+            changeKindness(player, -3);//F
+            changeGold(player, +5);//F
         }
         else if (choice == 2) {
             cout << "You feel sorry for them and give them some of your own gold." << endl;
             cout << "You hope they can survive." << endl;
 
-            【function: changeKindness(player, +2)】
-            【function: changeGold(player, -5)】
+            changeKindness(player, +2);//F
+            changeGold(player, -5);//F
         }
     }
 
@@ -135,15 +135,15 @@ void runForestEvent(int eventId, Player &player) {
 
             if (r1 == 0) {
                 cout << "A lot of gold!" << endl;
-                【function: changeGold(player, +5)】
+                changeGold(player, +5);//F
             }
             else if (r1 == 1) {
                 cout << "Some gold!" << endl;
-                【function: changeGold(player, +3)】
+                changeGold(player, +3);//F
             }
             else if (r1 == 2) {
                 cout << "A little gold!" << endl;
-                【function: changeGold(player, +1)】
+                changeGold(player, +1);//F
             }
             else {
                 cout << "You found nothing." << endl;
@@ -153,7 +153,7 @@ void runForestEvent(int eventId, Player &player) {
 
             if (r2 == 0) {
                 cout << "The rotten corpse carries a disease. You are infected!" << endl;
-                【function: changeMaxHP(player, -1)】
+                changeMaxHP(player, -1);//F
             }
             else {
                 cout << "Nothing else happens." << endl;
@@ -162,7 +162,7 @@ void runForestEvent(int eventId, Player &player) {
         else if (choice == 2) {
             cout << "You spend some time digging a deep hole and bury the remains." << endl;
 
-            【function: changeKindness(player, +1)】
+            changeKindness(player, +1);//F
         }
     }
 
@@ -182,8 +182,8 @@ void runForestEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You decide to hunt the tiger." << endl;
 
-            【function: enemy = createEnemy(tiger_id)】
-            【function: startBattle(player, enemy)】
+            Enemy enemy = createEnemy(tiger_id);//F and need modify
+            startBattle(player, enemy);//F
         }
         else if (choice == 2) {
             cout << "Only a fool would challenge the king of the forest. You choose to go around it." << endl;
@@ -197,16 +197,14 @@ void runForestEvent(int eventId, Player &player) {
                 cout << "The longer path is rough and dangerous." << endl;
                 cout << "You fall badly and even tear your money bag on the bushes." << endl;
 
-                【function: damagePlayer(player, 3)】
-                【function: changeGold(player, -3)】
+                damagePlayer(player, 3);//F
+                changeGold(player, -3);//F
             }
         }
     }
 
-
-        // ========================
-    // Event 9: Senior Adventurer
-    // ========================
+        
+    // event 9
     else if (eventId == 9) {
 
         cout << "Senior Adventurer" << endl;
@@ -222,20 +220,20 @@ void runForestEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You learn a balanced fighting style." << endl;
 
-            【function: changeAttack(player, +1)】
-            【function: changeDefense(player, +1)】
+            changeAttack(player, +1);//F
+            changeDefense(player, +1);//F
         }
         else if (choice == 2) {
             cout << "You focus entirely on offense." << endl;
 
-            【function: changeAttack(player, +3)】
-            【function: changeDefense(player, -1)】
+            changeAttack(player, +3);//F
+            changeDefense(player, -1);//F
         }
         else if (choice == 3) {
             cout << "You focus entirely on defense." << endl;
 
-            【function: changeDefense(player, +3)】
-            【function: changeAttack(player, -1)】
+            changeDefense(player, +3);//F
+            changeAttack(player, -1);//F
         }
     }
 
@@ -248,12 +246,12 @@ void runForestEvent(int eventId, Player &player) {
         cout << "The forest is pitch dark at night." << endl;
         cout << "Before you can react, someone stabs you from behind!" << endl;
 
-        【function: damagePlayer(player, 2)】
+        damagePlayer(player, 2);//F
 
         cout << "You are hurt and immediately enter battle." << endl;
 
-        【function: enemy = createEnemy(thief_id)】
-        【function: startBattle(player, enemy)】
+        Enemy enemy = createEnemy(thief_id);//F and need modify
+        startBattle(player, enemy);//F
     }
 
 
@@ -277,20 +275,20 @@ void runForestEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You decide to hunt small prey." << endl;
 
-           【function: enemy = createEnemy(rabbit_id)】
-           【function: startBattle(player, enemy)】
+            Enemy enemy = createEnemy(rabbit_id);//F and need modify
+            startBattle(player, enemy);//F
         }
         else if (choice == 2) {
             cout << "You decide to hunt medium prey." << endl;
 
-           【function: enemy = createEnemy(dog_id)】
-           【function: startBattle(player, enemy)】
+            enemy = createEnemy(dog_id);//F and need modify
+            startBattle(player, enemy);//F
         }
         else if (choice == 3) {
             cout << "You decide to hunt large prey." << endl;
 
-           【function: enemy = createEnemy(bear_id)】
-           【function: startBattle(player, enemy)】
+            Enemy enemy = createEnemy(bear_id);//F need modify
+            startBattle(player, enemy);//F
         }
     }
 
@@ -314,29 +312,29 @@ void runForestEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You clean your wounds and recover some health." << endl;
 
-            【function: healPlayer(player, 5)】
+            healPlayer(player, 5);//F
         }
         else if (choice == 2) {
             cout << "You drink the water and feel stronger." << endl;
 
-            【function: changeAttack(player, +1)】
-            【function: changeDefense(player, +1)】
-            【function: changeMaxHP(player, +1)】
+            changeAttack(player, +1);//F
+            changeDefense(player, +1);//F
+            changeMaxHP(player, +1);//F
         }
         else if (choice == 3) {
             cout << "You collect the water and sell it for gold." << endl;
 
-            【function: changeGold(player, +10)】
+            changeGold(player, +10);//F
         }
         else if (choice == 4) {
             cout << "You try to purify your sins." << endl;
 
-            int kindness = 【function: getKindness(player)】;
+            int kindness = getKindness(player);
 
             if (kindness < 0) {
                 cout << "Your sins are cleansed." << endl;
 
-                【function: setKindness(player, 0)】
+                setKindness(player, 0);
             } else {
                 cout << "You have no sins to cleanse." << endl;
             }
@@ -354,8 +352,8 @@ void runForestEvent(int eventId, Player &player) {
 
         cout << "Prepare for battle!" << endl;
 
-        【function: enemy = createBoss(forest_boss_id)】
-        【function: startBattle(player, enemy)】
+        Enemy enemy = createBoss(forest_boss_id);//F and need modify
+        startBattle(player, enemy);//F
     }
 
     
