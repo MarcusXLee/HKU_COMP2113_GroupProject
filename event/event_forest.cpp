@@ -295,4 +295,68 @@ void runForestEvent(int eventId, Player &player) {
     }
 
 
+
+// event 13
+    else if (eventId == 13) {
+
+        cout << "Magic Spring" << endl;
+        cout << "You discover a small green spring in the forest." << endl;
+        cout << "It seems to have magical power." << endl;
+
+        cout << "1. Clean your wounds" << endl;
+        cout << "2. Drink it" << endl;
+        cout << "3. Collect and sell it" << endl;
+        cout << "4. Purify your sins" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "You clean your wounds and recover some health." << endl;
+
+            【function: healPlayer(player, 5)】
+        }
+        else if (choice == 2) {
+            cout << "You drink the water and feel stronger." << endl;
+
+            【function: changeAttack(player, +1)】
+            【function: changeDefense(player, +1)】
+            【function: changeMaxHP(player, +1)】
+        }
+        else if (choice == 3) {
+            cout << "You collect the water and sell it for gold." << endl;
+
+            【function: changeGold(player, +10)】
+        }
+        else if (choice == 4) {
+            cout << "You try to purify your sins." << endl;
+
+            int kindness = 【function: getKindness(player)】;
+
+            if (kindness < 0) {
+                cout << "Your sins are cleansed." << endl;
+
+                【function: setKindness(player, 0)】
+            } else {
+                cout << "You have no sins to cleanse." << endl;
+            }
+        }
+    }
+
+
+        
+// event 14
+    else if (eventId == 14) {
+
+        cout << "Guardian of the Forest" << endl;
+        cout << "To leave the forest and move forward," << endl;
+        cout << "you must defeat the guardian of the forest — the Treant." << endl;
+
+        cout << "Prepare for battle!" << endl;
+
+        【function: enemy = createBoss(forest_boss_id)】
+        【function: startBattle(player, enemy)】
+    }
+
+    
 }
