@@ -111,5 +111,9 @@ void runForestEvent(int eventId, Player &player) {
         }
     }
 
+    else if (eventId == 10){
+        runMasterHermitEvent(player);
+    }
+
     
 }
