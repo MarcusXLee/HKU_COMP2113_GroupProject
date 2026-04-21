@@ -304,4 +304,49 @@ void runRevengeGodBlessingEvent(Player &player) {
     }
 }
 
+// Master Hermit
+void runMasterHermitEvent(Player &player) {
 
+    cout << "Master Hermit" << endl;
+    cout << "You encounter a reclusive master and seek guidance in martial arts." << endl;
+
+    cout << "1. Follow the balanced path" << endl;
+    cout << "2. Take an unconventional approach" << endl;
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        cout << "The master teaches you a balanced style." << endl;
+
+        changeAttack(player, +1);   // F
+        changeDefense(player, +1);  // F
+    }
+
+    else if (choice == 2) {
+        cout << "The master reshapes your abilities in an unpredictable way..." << endl;
+
+        int hp = getHP(player);           // F
+        int atk = getAttack(player);      // F
+        int def = getDefense(player);     // F
+
+        int stats[3] = {hp, atk, def};
+
+        for (int i = 0; i < 3; i++) {
+            int j = rand() % 3;
+            int temp = stats[i];
+            stats[i] = stats[j];
+            stats[j] = temp;
+        }
+
+        setHP(player, stats[0]);         //F
+        setAttack(player, stats[1]);     //F
+        setDefense(player, stats[2]);    //F
+
+        cout << "Your stats have been reshuffled!" << endl;
+    }
+
+    else {
+        cout << "Invalid choice. Nothing happens." << endl;
+    }
+}
