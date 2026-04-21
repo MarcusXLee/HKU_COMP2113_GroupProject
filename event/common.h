@@ -9,5 +9,6 @@ void runMerchantEvent(Player &player);
 void runGamblingEvent(Player &player);
 void runFoodCartEvent(Player &player);
 void runRevengeGodBlessingEvent(Player &player);
+void runMasterHermitEvent(Player &player);
 
 #endif
