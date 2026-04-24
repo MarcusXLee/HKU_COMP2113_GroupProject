@@ -22,7 +22,7 @@ const int UPGRADE_ATTACK = 1;
 const int UPGRADE_DEFENSE = 2;
 const int UPGRADE_MAX_HP = 3;
 
-// Create player with easy/hard initial stats.
+// Create player with easy or hard initial stats.
 Player createPlayer(int difficulty);
 
 // Basic getters.
