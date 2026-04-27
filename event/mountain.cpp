@@ -184,7 +184,7 @@ void runMountainEvent(int eventId, Player &player) {
     // event 13
     else if (eventId == 13) {
 
-        cout << "Dragon Egg!" << endl;
+        cout << "A Dragon Egg!" << endl;
         cout << "At the mountain peak, you discover a sleeping dragon and a dragon egg." << endl;
 
         cout << "1. Walk away quietly" << endl;
