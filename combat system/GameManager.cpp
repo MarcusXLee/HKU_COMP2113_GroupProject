@@ -1,3 +1,4 @@
+// Author: yuzhenxiang6-dotcom
 #include "GameManager.h"
 
 // Constructor: Initialize starting state

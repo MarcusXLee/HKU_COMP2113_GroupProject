@@ -1,3 +1,4 @@
+// Author: yuzhenxiang6-dotcom
 #ifndef GAMEMANAGER_H
 #define GAMEMANAGER_H
 
