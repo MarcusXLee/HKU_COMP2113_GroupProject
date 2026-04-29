@@ -4,6 +4,8 @@
 #include "event.h"
 #include "common.h"
 
+using namespace std;
+
 class EventManager {
 public:
     void triggerChapterEvent(int chapter, int eventId, Player &p) {

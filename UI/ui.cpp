@@ -45,5 +45,5 @@ void initUIFlow(Player &p) {
     // 调用队友写好的接口创建玩家
     p = createPlayer(diff); 
     
-    cout << "\nInitialized successfully！Current HP: " << getPlayerHP(p) <<  endl;
+    cout << "\nInitialized successfully! Current HP: " << getPlayerHP(p) <<  endl;
 }

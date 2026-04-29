@@ -581,7 +581,3 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
         }
     }
 }
-// =========================================================================================
-// END OF FILE: MountainEvents.cpp
-// Total logical pathways: 14 | Estimated runtime complexity: O(1) per event call
-// =========================================================================================
