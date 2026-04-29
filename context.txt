@@ -54,7 +54,7 @@ int showDifficultyMenu()
         cout << "==============================" << endl;
         cout << "Please enter your option(1 or 2):  ";
 
-        if ( cin >> choice) 
+        if (cin >> choice) 
         {
             if (choice == EASY_MODE || choice == HARD_MODE) 
             {
@@ -473,54 +473,57 @@ public:
 
 ```cpp
 #include <iostream>
+#include <cstdlib>
 #include "../player/player.h"
+#include "../enemy/enemy.h"
+#include "common.h"
+// Forward-declare startBattle until Combat.h is finalised.
+bool startBattle(Player &player, Enemy &enemy);
+
 using namespace std;
+
+// Enemy stage IDs used in this chapter (must match createBoss/createEnemy conventions).
+// Stage 3 = Abyss enemies. Specific non-boss enemies reuse createGoblin/createTiger
+// as stand-ins until the full enemy roster is fleshed out.
 
 void runAbyssEvent(int eventId, Player &player) {
 
-  //event 1
-  if (eventId == 1) {
-    runBattleGodBlessingEvent(player);
-  }
+    // event 1
+    if (eventId == 1) {
+        runBattleGodBlessingEvent(player);
+    }
 
+    // event 2
+    else if (eventId == 2) {
+        runJudgmentEvent(player);
+    }
 
-    
-  //event 2
-  else if (eventId == 2) {
-    runJudgmentEvent(player);
-  }
+    // event 3
+    else if (eventId == 3) {
+        runMerchantEvent(player);
+    }
 
+    // event 4
+    else if (eventId == 4) {
+        runGamblingEvent(player);
+    }
 
-  //event 3
-  else if (eventId == 3) {
-    runMerchantEvent(player);
-  }
+    // event 5
+    else if (eventId == 5) {
+        runFoodCartEvent(player);
+    }
 
-    
-  //event 4
-  else if (eventId == 4) {
-    runGamblingEvent(player);
-  }
+    // event 6
+    else if (eventId == 6) {
+        runRevengeGodBlessingEvent(player);
+    }
 
+    // event 7
+    else if (eventId == 7) {
+        runMasterHermitEvent(player);
+    }   // Fixed: closing brace was missing here; events 8-16 were nested inside event 7
 
-  //event 5
-  else if (eventId == 5) {
-    runFoodCartEvent(player);
-  }
-
-
-  //event 6
-  else if (eventId == 6) {
-    runRevengeGodBlessingEvent(player);  
-  }
-
-
-  //event 7
-  else if (eventId == 7) {
-    runMasterHermitEvent(player);
-
-
-  //event 8
+    // event 8
     else if (eventId == 8) {
 
         cout << "Evil Creature" << endl;
@@ -535,21 +538,21 @@ void runAbyssEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You avoid the evil creature, but you are still cursed by it." << endl;
 
-            changeAttack(player, -3);    // F
-            changeDefense(player, -2);   // F
-            changeMaxHP(player, -1);     //F
+            changePlayerAttack(player, -3);     // Fixed: was changeAttack
+            changePlayerDefense(player, -2);    // Fixed: was changeDefense
+            changePlayerMaxHP(player, -1);      // Fixed: was changeMaxHP
         }
         else if (choice == 2) {
             cout << "You decide to destroy the evil creature." << endl;
 
-            Enemy enemy = createEnemy(evil_creature_id);   // F
-            startBattle(player, enemy);                    // F
+            // Fixed: evil_creature_id undefined; using createGoblin as stand-in
+            Enemy enemy = createGoblin();
+            startBattle(player, enemy);
         }
         else {
             cout << "Invalid choice. Nothing happens." << endl;
         }
     }
-
 
     // event 9
     else if (eventId == 9) {
@@ -558,11 +561,10 @@ void runAbyssEvent(int eventId, Player &player) {
         cout << "Dragon soldiers are servants of the Demon King." << endl;
         cout << "They are hunting you in the abyss." << endl;
 
-        Enemy enemy = createEnemy(dragon_soldier_id);   // F
-        startBattle(player, enemy);                     // F
+        // Fixed: dragon_soldier_id undefined; using createTiger as stand-in
+        Enemy enemy = createTiger();
+        startBattle(player, enemy);
     }
-
-      
 
     // event 10
     else if (eventId == 10) {
@@ -571,8 +573,9 @@ void runAbyssEvent(int eventId, Player &player) {
         cout << "A Great Demon stands before you." << endl;
         cout << "Its hands are stained with human blood." << endl;
 
-        Enemy enemy = createEnemy(greater_demon_id);   // F
-        startBattle(player, enemy);                    // F
+        // Fixed: greater_demon_id undefined; using createBoss(2) as stand-in
+        Enemy enemy = createBoss(2);
+        startBattle(player, enemy);
     }
 
     // event 11
@@ -582,12 +585,10 @@ void runAbyssEvent(int eventId, Player &player) {
         cout << "The existence at the end of the abyss seems to have sensed your arrival." << endl;
         cout << "You feel that some terrifying being is watching you from the darkness." << endl;
 
-        changeAttack(player, -3);    // F
-        changeDefense(player, -3);   // F
-        changeMaxHP(player, -3);     // F
+        changePlayerAttack(player, -3);     // Fixed
+        changePlayerDefense(player, -3);    // Fixed
+        changePlayerMaxHP(player, -3);      // Fixed
     }
-
-
 
     // event 12
     else if (eventId == 12) {
@@ -596,20 +597,20 @@ void runAbyssEvent(int eventId, Player &player) {
         cout << "The God of Good and Evil enters your dream." << endl;
         cout << "It is time for judgment based on everything you have done on your journey." << endl;
 
-        int kindness = getKindness(player);   // F
+        int kindness = getPlayerKindness(player);   // Fixed: was getKindness
 
         if (kindness >= 10) {
             cout << "Your soul has reached a higher state. All your powers are doubled!" << endl;
 
-            int atk = getAttack(player);      // F
-            int def = getDefense(player);     //F
-            int maxHP = getMaxHP(player);     //F
-            int hp = getHP(player);           // F
+            int atk   = getPlayerAttack(player);    // Fixed: was getAttack
+            int def   = getPlayerDefense(player);   // Fixed: was getDefense
+            int maxHP = getPlayerMaxHP(player);     // Fixed: was getMaxHP
+            int hp    = getPlayerHP(player);        // Fixed: was getHP
 
-            changeAttack(player, atk);        // F
-            changeDefense(player, def);       // F
-            changeMaxHP(player, maxHP);       //F
-            healPlayer(player, hp);           // F
+            changePlayerAttack(player, atk);        // Fixed
+            changePlayerDefense(player, def);       // Fixed
+            changePlayerMaxHP(player, maxHP);       // Fixed
+            healPlayer(player, hp);                 // Fixed
         }
         else if (kindness >= 5) {
             cout << "Your actions are worthy of a great blessing." << endl;
@@ -617,33 +618,33 @@ void runAbyssEvent(int eventId, Player &player) {
             int r = rand() % 3;
 
             if (r == 0) {
-                int atk = getAttack(player);
-                int def = getDefense(player);
+                int atk = getPlayerAttack(player);
+                int def = getPlayerDefense(player);
 
-                changeAttack(player, atk);    // F
-                changeDefense(player, def);   // F
+                changePlayerAttack(player, atk);    // Fixed
+                changePlayerDefense(player, def);   // Fixed
 
                 cout << "Your Attack and Defense are doubled!" << endl;
             }
             else if (r == 1) {
-                int atk = getAttack(player);
-                int maxHP = getMaxHP(player);
-                int hp = getHP(player);
+                int atk   = getPlayerAttack(player);
+                int maxHP = getPlayerMaxHP(player);
+                int hp    = getPlayerHP(player);
 
-                changeAttack(player, atk);    // F
-                changeMaxHP(player, maxHP);   // F
-                healPlayer(player, hp);       // F
+                changePlayerAttack(player, atk);    // Fixed
+                changePlayerMaxHP(player, maxHP);   // Fixed
+                healPlayer(player, hp);             // Fixed
 
                 cout << "Your Attack and HP are doubled!" << endl;
             }
             else {
-                int def = getDefense(player);
-                int maxHP = getMaxHP(player);
-                int hp = getHP(player);
+                int def   = getPlayerDefense(player);
+                int maxHP = getPlayerMaxHP(player);
+                int hp    = getPlayerHP(player);
 
-                changeDefense(player, def);   // F
-                changeMaxHP(player, maxHP);   // F
-                healPlayer(player, hp);       // F
+                changePlayerDefense(player, def);   // Fixed
+                changePlayerMaxHP(player, maxHP);   // Fixed
+                healPlayer(player, hp);             // Fixed
 
                 cout << "Your Defense and HP are doubled!" << endl;
             }
@@ -654,21 +655,21 @@ void runAbyssEvent(int eventId, Player &player) {
             int r = rand() % 3;
 
             if (r == 0) {
-                int atk = getAttack(player);
-                changeAttack(player, atk);    // F
+                int atk = getPlayerAttack(player);
+                changePlayerAttack(player, atk);    // Fixed
                 cout << "Your Attack is doubled!" << endl;
             }
             else if (r == 1) {
-                int def = getDefense(player);
-                changeDefense(player, def);   // F
+                int def = getPlayerDefense(player);
+                changePlayerDefense(player, def);   // Fixed
                 cout << "Your Defense is doubled!" << endl;
             }
             else {
-                int maxHP = getMaxHP(player);
-                int hp = getHP(player);
+                int maxHP = getPlayerMaxHP(player);
+                int hp    = getPlayerHP(player);
 
-                changeMaxHP(player, maxHP);   // F
-                healPlayer(player, hp);       // F
+                changePlayerMaxHP(player, maxHP);   // Fixed
+                healPlayer(player, hp);             // Fixed
 
                 cout << "Your HP is doubled!" << endl;
             }
@@ -679,47 +680,41 @@ void runAbyssEvent(int eventId, Player &player) {
             int r = rand() % 3;
 
             if (r == 0) {
-                int atk = getAttack(player) / 2;
-                changeAttack(player, -atk);   // F
+                int atk = getPlayerAttack(player) / 2;
+                changePlayerAttack(player, -atk);   // Fixed
                 cout << "Your Attack is halved!" << endl;
             }
             else if (r == 1) {
-                int def = getDefense(player) / 2;
-                changeDefense(player, -def);  // F
+                int def = getPlayerDefense(player) / 2;
+                changePlayerDefense(player, -def);  // Fixed
                 cout << "Your Defense is halved!" << endl;
             }
             else {
-                int maxHP = getMaxHP(player) / 2;
-                int hp = getHP(player) / 2;
+                int maxHP = getPlayerMaxHP(player) / 2;
+                int hp    = getPlayerHP(player) / 2;
 
-                changeMaxHP(player, -maxHP);  // F
-                damagePlayer(player, hp);     // F
+                changePlayerMaxHP(player, -maxHP);  // Fixed
+                damagePlayer(player, hp);           // Fixed
 
                 cout << "Your HP is halved!" << endl;
             }
         }
     }
 
-
-
     // event 13
-      
     else if (eventId == 13) {
 
         cout << "Encouragement of the God of Revenge!" << endl;
         cout << "The God of Revenge admires your courage for entering the abyss alone." << endl;
         cout << "For once, the god decides to be generous." << endl;
 
-        int lostHP = getMaxHP(player) - getHP(player);   // F
-        changeAttack(player, lostHP);                    // F
+        int lostHP = getPlayerMaxHP(player) - getPlayerHP(player);  // Fixed
+        changePlayerAttack(player, lostHP);                         // Fixed
 
         cout << "Your pain has been transformed into strength." << endl;
         cout << "You gained " << lostHP << " Attack." << endl;
     }
 
-
-
-      
     // event 14
     else if (eventId == 14) {
 
@@ -727,9 +722,8 @@ void runAbyssEvent(int eventId, Player &player) {
         cout << "In the abyss, you find the remains of a fallen adventurer." << endl;
         cout << "A noble soul rises from the bones and grants you hope to defeat the Demon King." << endl;
 
-        changeKindness(player, +5);   // F
+        changePlayerKindness(player, +5);   // Fixed
     }
-
 
     // event 15
     else if (eventId == 15) {
@@ -744,12 +738,12 @@ void runAbyssEvent(int eventId, Player &player) {
         cin >> choice;
 
         if (choice == 1) {
-            int gold = getGold(player);          // F
-            int gain = gold / 10;                // F
+            int gold = getPlayerGold(player);       // Fixed: was getGold
+            int gain = gold / 10;
 
-            loseAllGold(player);                 // F
-            changeAttack(player, gain);          // F
-            changeDefense(player, gain);         // F
+            setPlayerGold(player, 0);               // Fixed: was loseAllGold
+            changePlayerAttack(player, gain);       // Fixed
+            changePlayerDefense(player, gain);      // Fixed
 
             cout << "You gave up all your gold." << endl;
             cout << "You gained " << gain << " Attack and " << gain << " Defense." << endl;
@@ -759,8 +753,6 @@ void runAbyssEvent(int eventId, Player &player) {
         }
     }
 
-
-
     // event 16
     else if (eventId == 16) {
 
@@ -768,8 +760,9 @@ void runAbyssEvent(int eventId, Player &player) {
         cout << "At last, you stand before the Demon King." << endl;
         cout << "The time has come to face your greatest enemy." << endl;
 
-        Enemy enemy = createEnemy(demon_king_id);   // F
-        bool win = startBattle(player, enemy);      // F
+        // Fixed: demon_king_id undefined; use createBoss(3) = DemonKing
+        Enemy enemy = createBoss(3);
+        bool win = startBattle(player, enemy);      // Fixed
 
         if (win) {
             cout << "You defeated the Demon King!" << endl;
@@ -780,7 +773,6 @@ void runAbyssEvent(int eventId, Player &player) {
         }
     }
 }
-
 ```
 
 `event/common.cpp`:
@@ -789,13 +781,20 @@ void runAbyssEvent(int eventId, Player &player) {
 #include <iostream>
 #include <cstdlib>
 #include "../player/player.h"
+#include "../enemy/enemy.h"
+#include "common.h"
+// Note: startBattle() is declared in combat system/Combat.h.
+// Add: #include "../combat system/Combat.h"  once that header is finalised.
+// For now we forward-declare it so every event file compiles independently.
+bool startBattle(Player &player, Enemy &enemy);
+
 using namespace std;
 
-//Blessing of the God of Battle
-
-void runBattleGodBlessingEvent(Player& player)
+// ---------------------------------------------------------------------------
+// Blessing of the God of Battle
+// ---------------------------------------------------------------------------
+void runBattleGodBlessingEvent(Player &player)
 {
-
     cout << "Blessing of the God of Battle" << endl;
     cout << "After wandering for a while, you discover a statue of the God of Battle." << endl;
 
@@ -805,16 +804,16 @@ void runBattleGodBlessingEvent(Player& player)
     int choice;
     cin >> choice;
 
-    if (choice == 1) 
+    if (choice == 1)
     {
         cout << "You kneel and pray for strength to defeat your enemies and avenge the Demon King." << endl;
         cout << "The God of Battle admires your courage and offers power in exchange for gold." << endl;
 
-        changeGold(player, -20);//F
-        changeAttack(player, +1);//F
-        changeDefense(player, +1);//F
+        changePlayerGold(player, -20);      // Fixed: was changeGold
+        changePlayerAttack(player, +1);     // Fixed: was changeAttack
+        changePlayerDefense(player, +1);    // Fixed: was changeDefense
     }
-    else if (choice == 2) 
+    else if (choice == 2)
     {
         cout << "You believe the gods are only illusions." << endl;
         cout << "Only your own strength can lead you to revenge." << endl;
@@ -822,58 +821,57 @@ void runBattleGodBlessingEvent(Player& player)
     }
 }
 
-
+// ---------------------------------------------------------------------------
 // Judgment of Good and Evil
-
+// ---------------------------------------------------------------------------
 void runJudgmentEvent(Player &player) {
 
     cout << "Judgment of Good and Evil" << endl;
     cout << "A statue of the God of Good and Evil stands in the middle of the road." << endl;
     cout << "Every traveler must accept its judgment." << endl;
 
-    int kindness = [function: getKindness(player)];
+    int kindness = getPlayerKindness(player);   // Fixed: was [function: getKindness(player)]
 
     if (kindness >= 5) {
         cout << "Your kindness deserves a reward!" << endl;
 
-        changeMaxHP(player, +5);//F
-        changeAttack(player, +1);//F
-        changeDefense(player, +1);//F
+        changePlayerMaxHP(player, +5);      // Fixed: was changeMaxHP
+        changePlayerAttack(player, +1);     // Fixed: was changeAttack
+        changePlayerDefense(player, +1);    // Fixed: was changeDefense
     }
     else if (kindness > 0 && kindness < 5) {
         cout << "Your kindness is worth encouraging!" << endl;
 
-        changeMaxHP(player, +3);//F
+        changePlayerMaxHP(player, +3);      // Fixed: was changeMaxHP
     }
     else if (kindness < 0 && kindness > -5) {
         cout << "This is a warning!" << endl;
 
         int r = rand() % 2;
 
-        if (r == 0) 
+        if (r == 0)
         {
             cout << "You lost 1 Attack." << endl;
-            changeAttack(player, -1);//F
+            changePlayerAttack(player, -1);     // Fixed
         }
         else {
             cout << "You lost 1 Defense." << endl;
-            changeDefense(player, -1);//F
+            changePlayerDefense(player, -1);    // Fixed
         }
     }
     else if (kindness <= -5) {
         cout << "Your sins are unforgivable. Judgment must be carried out!" << endl;
 
-        changeMaxHP(player, -5);//F
+        changePlayerMaxHP(player, -5);      // Fixed
     }
     else {
         cout << "Nothing happens." << endl;
     }
 }
 
-
-
+// ---------------------------------------------------------------------------
 // Wandering Merchant
-
+// ---------------------------------------------------------------------------
 void runMerchantEvent(Player &player) {
 
     cout << "Wandering Merchant" << endl;
@@ -897,18 +895,18 @@ void runMerchantEvent(Player &player) {
         cin >> subChoice;
 
         if (subChoice == 1) {
-            changeGold(player, -5);//F
-            changeAttack(player, +1);//F
+            changePlayerGold(player, -5);       // Fixed
+            changePlayerAttack(player, +1);     // Fixed
             cout << "You bought a cheap weapon." << endl;
         }
         else if (subChoice == 2) {
-            changeGold(player, -15);//F
-            changeAttack(player, +2);//F
+            changePlayerGold(player, -15);      // Fixed
+            changePlayerAttack(player, +2);     // Fixed
             cout << "You bought a fine weapon." << endl;
         }
         else if (subChoice == 3) {
-            changeGold(player, -25);//F
-            changeAttack(player, +3);//F
+            changePlayerGold(player, -25);      // Fixed
+            changePlayerAttack(player, +3);     // Fixed
             cout << "You bought a top weapon." << endl;
         }
     }
@@ -922,32 +920,34 @@ void runMerchantEvent(Player &player) {
         cin >> subChoice;
 
         if (subChoice == 1) {
-            changeGold(player, -5);//F
-            changeDefense(player, +1);//F
+            changePlayerGold(player, -5);       // Fixed
+            changePlayerDefense(player, +1);    // Fixed
             cout << "You bought a cheap armor." << endl;
         }
         else if (subChoice == 2) {
-            changeGold(player, -15);//F
-            changeDefense(player, +2);//F
+            changePlayerGold(player, -15);      // Fixed
+            changePlayerDefense(player, +2);    // Fixed
             cout << "You bought a fine armor." << endl;
         }
         else if (subChoice == 3) {
-            changeGold(player, -25);//F
-            changeDefense(player, +3);//F
+            changePlayerGold(player, -25);      // Fixed
+            changePlayerDefense(player, +3);    // Fixed
             cout << "You bought a top armor." << endl;
         }
     }
     else if (choice == 3) {
         cout << "You decide to rob the merchant!" << endl;
 
-        Enemy enemy = createEnemy(merchant);//F and need modify
+        // Fixed: createEnemy takes an int stage; use stage 1 (weakest enemy) as a
+        // stand-in for the merchant until a dedicated merchant enemy ID is defined.
+        Enemy enemy = createGoblin();
         startBattle(player, enemy);
     }
 }
 
-
-
-//Gambling House
+// ---------------------------------------------------------------------------
+// Gambling House
+// ---------------------------------------------------------------------------
 void runGamblingEvent(Player &player) {
 
     cout << "Gambling House" << endl;
@@ -966,51 +966,51 @@ void runGamblingEvent(Player &player) {
 
         if (r < 25) {
             cout << "You lost 1 gold." << endl;
-            changeGold(player, -1);//F
+            changePlayerGold(player, -1);       // Fixed
         }
         else if (r < 75) {
             cout << "Nothing happens." << endl;
         }
         else {
             cout << "You won 1 gold!" << endl;
-            changeGold(player, +1);//F
+            changePlayerGold(player, +1);       // Fixed
         }
     }
-
     else if (choice == 2) {
         int r = rand() % 100;
 
         if (r < 25) {
             cout << "You lost 5 gold." << endl;
-            changeGold(player, -5);//F
+            changePlayerGold(player, -5);       // Fixed
         }
         else if (r < 75) {
             cout << "Nothing happens." << endl;
         }
         else {
             cout << "You won 5 gold!" << endl;
-            changeGold(player, +5);//F
+            changePlayerGold(player, +5);       // Fixed
         }
     }
-
     else if (choice == 3) {
         int r = rand() % 100;
 
         if (r < 25) {
             cout << "You lost all your gold." << endl;
-            loseAllGold(player);//F
+            setPlayerGold(player, 0);           // Fixed: was loseAllGold (no such function)
         }
         else if (r < 75) {
             cout << "Nothing happens." << endl;
         }
         else {
             cout << "You doubled your gold!" << endl;
-            doubleGold(player);//F
+            setPlayerGold(player, getPlayerGold(player) * 2); // Fixed: was doubleGold
         }
-    }   
+    }
 }
-    
+
+// ---------------------------------------------------------------------------
 // Food Cart
+// ---------------------------------------------------------------------------
 void runFoodCartEvent(Player &player) {
 
     cout << "Food Cart" << endl;
@@ -1026,19 +1026,19 @@ void runFoodCartEvent(Player &player) {
     if (choice == 1) {
         cout << "You enjoy a small snack." << endl;
 
-        changeGold(player, -2);//F
-        healPlayer(player, getMaxHP(player) * 0.1);//F
+        changePlayerGold(player, -2);                                   // Fixed
+        healPlayer(player, getPlayerMaxHP(player) * 10 / 100);          // Fixed: int arithmetic
     }
     else if (choice == 2) {
         cout << "You enjoy a full meal." << endl;
 
-        changeGold(player, -5);//function
-        healPlayer(player, getMaxHP(player) * 0.3);//function
+        changePlayerGold(player, -5);                                   // Fixed
+        healPlayer(player, getPlayerMaxHP(player) * 30 / 100);          // Fixed
     }
     else if (choice == 3) {
         cout << "You try the magical food..." << endl;
 
-        changeGold(player, -15);//F
+        changePlayerGold(player, -15);                                  // Fixed
 
         int r = rand() % 2;
 
@@ -1047,22 +1047,23 @@ void runFoodCartEvent(Player &player) {
 
             int loss = rand() % 4 + 1;  // 1~4
 
-            changeAttack(player, -loss);//function
-            changeDefense(player, 2 * loss);//function
+            changePlayerAttack(player, -loss);          // Fixed
+            changePlayerDefense(player, 2 * loss);      // Fixed
         }
         else {
             cout << "You lost some Defense but gained great Attack!" << endl;
 
             int loss = rand() % 4 + 1;
 
-             changeDefense(player, -loss);//function
-             changeAttack(player, 2 * loss);//function
+            changePlayerDefense(player, -loss);         // Fixed
+            changePlayerAttack(player, 2 * loss);       // Fixed
         }
     }
 }
 
-
+// ---------------------------------------------------------------------------
 // Blessing of the God of Revenge
+// ---------------------------------------------------------------------------
 void runRevengeGodBlessingEvent(Player &player) {
 
     cout << "Blessing of the God of Revenge" << endl;
@@ -1079,25 +1080,29 @@ void runRevengeGodBlessingEvent(Player &player) {
     if (choice == 1) {
         cout << "The God of Revenge is disappointed, but still grants you power." << endl;
 
-        changeAttack(player, +1);//F
+        changePlayerAttack(player, +1);     // Fixed
     }
     else if (choice == 2) {
         cout << "The god approves your determination and demands a price." << endl;
 
-        damagePlayer(player, 5);//F
-        changeAttack(player, +3);//F
+        damagePlayer(player, 5);            // Fixed
+        changePlayerAttack(player, +3);     // Fixed
     }
     else if (choice == 3) {
         cout << "The God of Revenge is finally satisfied." << endl;
         cout << "You give up everything for ultimate power." << endl;
 
-        setHPToOne(player);//F
-        changeAttack(player, -2);//F
-        doubleAttack(player);//F
+        leavePlayerAtOneHP(player);                                     // Fixed: was setHPToOne
+        int currentAtk = getPlayerAttack(player);
+        changePlayerAttack(player, -2);                                 // Fixed
+        changePlayerAttack(player, getPlayerAttack(player));            // Fixed: was doubleAttack
+        setPlayerAttack(player, getPlayerAttack(player) * 2);
     }
 }
 
+// ---------------------------------------------------------------------------
 // Master Hermit
+// ---------------------------------------------------------------------------
 void runMasterHermitEvent(Player &player) {
 
     cout << "Master Hermit" << endl;
@@ -1112,16 +1117,15 @@ void runMasterHermitEvent(Player &player) {
     if (choice == 1) {
         cout << "The master teaches you a balanced style." << endl;
 
-        changeAttack(player, +1);   // F
-        changeDefense(player, +1);  // F
+        changePlayerAttack(player, +1);     // Fixed
+        changePlayerDefense(player, +1);    // Fixed
     }
-
     else if (choice == 2) {
         cout << "The master reshapes your abilities in an unpredictable way..." << endl;
 
-        int hp = getHP(player);           // F
-        int atk = getAttack(player);      // F
-        int def = getDefense(player);     // F
+        int hp  = getPlayerHP(player);          // Fixed: was getHP
+        int atk = getPlayerAttack(player);      // Fixed: was getAttack
+        int def = getPlayerDefense(player);     // Fixed: was getDefense
 
         int stats[3] = {hp, atk, def};
 
@@ -1132,18 +1136,16 @@ void runMasterHermitEvent(Player &player) {
             stats[j] = temp;
         }
 
-        setHP(player, stats[0]);         //F
-        setAttack(player, stats[1]);     //F
-        setDefense(player, stats[2]);    //F
+        setPlayerHP(player, stats[0]);          // Fixed: was setHP
+        setPlayerAttack(player, stats[1]);      // Fixed: was setAttack
+        setPlayerDefense(player, stats[2]);     // Fixed: was setDefense
 
         cout << "Your stats have been reshuffled!" << endl;
     }
-
     else {
         cout << "Invalid choice. Nothing happens." << endl;
     }
 }
-
 ```
 
 `event/common.h`:
@@ -1151,8 +1153,9 @@ void runMasterHermitEvent(Player &player) {
 ```h
 #ifndef COMMON_H
 #define COMMON_H
-
-
+ 
+#include "../player/player.h"   // Fixed: Player type must be included before it is used
+ 
 void runBattleGodBlessingEvent(Player &player);
 void runJudgmentEvent(Player &player);
 void runMerchantEvent(Player &player);
@@ -1160,9 +1163,8 @@ void runGamblingEvent(Player &player);
 void runFoodCartEvent(Player &player);
 void runRevengeGodBlessingEvent(Player &player);
 void runMasterHermitEvent(Player &player);
-
+ 
 #endif
-
 ```
 
 `event/event.h`:
@@ -1185,13 +1187,18 @@ void runAbyssEvent(int eventId, Player &p);
 
 ```cpp
 #include <iostream>
+#include <cstdlib>
 #include "../player/player.h"
 #include "../enemy/enemy.h"
+#include "common.h"
+// Forward-declare startBattle until Combat.h is finalised.
+bool startBattle(Player &player, Enemy &enemy);
+
 using namespace std;
 
 void runForestEvent(int eventId, Player &player) {
 
-//event 1    
+    // event 1
     if (eventId == 1) {
 
         cout << "Goblin Robbery!" << endl;
@@ -1209,24 +1216,23 @@ void runForestEvent(int eventId, Player &player) {
             cout << "You hand over half of your gold. "
                  << "The goblins leave happily and even call you a good person." << endl;
 
-            changeGold(player, -5);//F
-            changeKindness(player, +1);//F
+            changePlayerGold(player, -5);           // Fixed: was changeGold
+            changePlayerKindness(player, +1);       // Fixed: was changeKindness
         }
         else if (choice == 2) {
             cout << "You refuse to give up your gold and prepare to fight!" << endl;
 
-            Enemy enemy = createEnemy(1);//F
-            startBattle(player, enemy);//F
+            Enemy enemy = createGoblin();           // Fixed: was createEnemy(1) - no such function
+            startBattle(player, enemy);             // Fixed: was startBattle(player, enemy) - OK
         }
     }
 
-//event 2
+    // event 2
     else if (eventId == 2) {
         runBattleGodBlessingEvent(player);
     }
 
-
-//event 3        
+    // event 3
     else if (eventId == 3) {
 
         cout << "A Peaceful Village" << endl;
@@ -1242,27 +1248,26 @@ void runForestEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You decide to take a full day of rest." << endl;
 
-            healPlayer(player, getMaxHP(player) * 0.3);//F
+            healPlayer(player, getPlayerMaxHP(player) * 30 / 100);  // Fixed: int arithmetic
         }
         else if (choice == 2) {
             cout << "You sneak into the blacksmith shop and steal a piece of equipment." << endl;
 
-            changeKindness(player, -1);//F
+            changePlayerKindness(player, -1);       // Fixed
 
             int r = rand() % 2;
 
             if (r == 0) {
                 cout << "You gained +1 Attack." << endl;
-                changeAttack(player, +1);//F
+                changePlayerAttack(player, +1);     // Fixed
             } else {
                 cout << "You gained +1 Defense." << endl;
-                changeDefense(player, +1);//F
+                changePlayerDefense(player, +1);    // Fixed
             }
         }
     }
 
-
-//event 4      
+    // event 4
     else if (eventId == 4) {
 
         cout << "Ruined Village" << endl;
@@ -1280,32 +1285,29 @@ void runForestEvent(int eventId, Player &player) {
             cout << "You rob the helpless villagers and take their last coins." << endl;
             cout << "All you receive in return is their curse." << endl;
 
-            changeKindness(player, -3);//F
-            changeGold(player, +5);//F
+            changePlayerKindness(player, -3);       // Fixed
+            changePlayerGold(player, +5);           // Fixed
         }
         else if (choice == 2) {
             cout << "You feel sorry for them and give them some of your own gold." << endl;
             cout << "You hope they can survive." << endl;
 
-            changeKindness(player, +2);//F
-            changeGold(player, -5);//F
+            changePlayerKindness(player, +2);       // Fixed
+            changePlayerGold(player, -5);           // Fixed
         }
     }
 
-
-//event 5      
+    // event 5
     else if (eventId == 5) {
         runJudgmentEvent(player);
     }
 
-        
-//event 6
+    // event 6
     else if (eventId == 6) {
         runMerchantEvent(player);
     }
 
-        
-//event 7
+    // event 7
     else if (eventId == 7) {
 
         cout << "Adventurer's Remains" << endl;
@@ -1323,15 +1325,15 @@ void runForestEvent(int eventId, Player &player) {
 
             if (r1 == 0) {
                 cout << "A lot of gold!" << endl;
-                changeGold(player, +5);//F
+                changePlayerGold(player, +5);       // Fixed
             }
             else if (r1 == 1) {
                 cout << "Some gold!" << endl;
-                changeGold(player, +3);//F
+                changePlayerGold(player, +3);       // Fixed
             }
             else if (r1 == 2) {
                 cout << "A little gold!" << endl;
-                changeGold(player, +1);//F
+                changePlayerGold(player, +1);       // Fixed
             }
             else {
                 cout << "You found nothing." << endl;
@@ -1341,7 +1343,7 @@ void runForestEvent(int eventId, Player &player) {
 
             if (r2 == 0) {
                 cout << "The rotten corpse carries a disease. You are infected!" << endl;
-                changeMaxHP(player, -1);//F
+                changePlayerMaxHP(player, -1);      // Fixed
             }
             else {
                 cout << "Nothing else happens." << endl;
@@ -1350,11 +1352,11 @@ void runForestEvent(int eventId, Player &player) {
         else if (choice == 2) {
             cout << "You spend some time digging a deep hole and bury the remains." << endl;
 
-            changeKindness(player, +1);//F
+            changePlayerKindness(player, +1);       // Fixed
         }
     }
 
-//event 8
+    // event 8
     else if (eventId == 8) {
 
         cout << "Forest Tiger" << endl;
@@ -1370,8 +1372,8 @@ void runForestEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You decide to hunt the tiger." << endl;
 
-            Enemy enemy = createEnemy(tiger_id);//F and need modify
-            startBattle(player, enemy);//F
+            Enemy enemy = createTiger();            // Fixed: was createEnemy(tiger_id)
+            startBattle(player, enemy);             // Fixed
         }
         else if (choice == 2) {
             cout << "Only a fool would challenge the king of the forest. You choose to go around it." << endl;
@@ -1385,13 +1387,12 @@ void runForestEvent(int eventId, Player &player) {
                 cout << "The longer path is rough and dangerous." << endl;
                 cout << "You fall badly and even tear your money bag on the bushes." << endl;
 
-                damagePlayer(player, 3);//F
-                changeGold(player, -3);//F
+                damagePlayer(player, 3);            // Fixed
+                changePlayerGold(player, -3);       // Fixed
             }
         }
     }
 
-        
     // event 9
     else if (eventId == 9) {
 
@@ -1408,49 +1409,45 @@ void runForestEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You learn a balanced fighting style." << endl;
 
-            changeAttack(player, +1);//F
-            changeDefense(player, +1);//F
+            changePlayerAttack(player, +1);         // Fixed
+            changePlayerDefense(player, +1);        // Fixed
         }
         else if (choice == 2) {
             cout << "You focus entirely on offense." << endl;
 
-            changeAttack(player, +3);//F
-            changeDefense(player, -1);//F
+            changePlayerAttack(player, +3);         // Fixed
+            changePlayerDefense(player, -1);        // Fixed
         }
         else if (choice == 3) {
             cout << "You focus entirely on defense." << endl;
 
-            changeDefense(player, +3);//F
-            changeAttack(player, -1);//F
+            changePlayerDefense(player, +3);        // Fixed
+            changePlayerAttack(player, -1);         // Fixed
         }
     }
 
-
-        
-// event 10
+    // event 10
     else if (eventId == 10) {
 
         cout << "Backstab!" << endl;
         cout << "The forest is pitch dark at night." << endl;
         cout << "Before you can react, someone stabs you from behind!" << endl;
 
-        damagePlayer(player, 2);//F
+        damagePlayer(player, 2);                    // Fixed
 
         cout << "You are hurt and immediately enter battle." << endl;
 
-        Enemy enemy = createEnemy(thief_id);//F and need modify
-        startBattle(player, enemy);//F
+        // Fixed: thief_id undefined; using createGoblin as stand-in
+        Enemy enemy = createGoblin();
+        startBattle(player, enemy);                 // Fixed
     }
 
-
-//event 11
+    // event 11
     else if (eventId == 11) {
-       runGamblingEvent(player);
-   }
+        runGamblingEvent(player);
+    }
 
-        
-// event 12
-        
+    // event 12
     else if (eventId == 12) {
         cout << "Hunting" << endl;
         cout << "An old hunter living in the forest invites you to go hunting with him." << endl;
@@ -1463,26 +1460,27 @@ void runForestEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You decide to hunt small prey." << endl;
 
-            Enemy enemy = createEnemy(rabbit_id);//F and need modify
-            startBattle(player, enemy);//F
+            // Fixed: rabbit_id undefined; using createGoblin as lightest stand-in
+            Enemy enemy = createGoblin();
+            startBattle(player, enemy);             // Fixed
         }
         else if (choice == 2) {
             cout << "You decide to hunt medium prey." << endl;
 
-            enemy = createEnemy(dog_id);//F and need modify
-            startBattle(player, enemy);//F
+            // Fixed: was `enemy = createEnemy(dog_id)` — enemy was undeclared in this branch
+            Enemy enemy = createGoblin();
+            startBattle(player, enemy);             // Fixed
         }
         else if (choice == 3) {
             cout << "You decide to hunt large prey." << endl;
 
-            Enemy enemy = createEnemy(bear_id);//F need modify
-            startBattle(player, enemy);//F
+            // Fixed: bear_id undefined; using createTiger as heaviest available stand-in
+            Enemy enemy = createTiger();
+            startBattle(player, enemy);             // Fixed
         }
     }
 
-
-
-// event 13
+    // event 13
     else if (eventId == 13) {
 
         cout << "Magic Spring" << endl;
@@ -1500,38 +1498,36 @@ void runForestEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You clean your wounds and recover some health." << endl;
 
-            healPlayer(player, 5);//F
+            healPlayer(player, 5);                  // Fixed
         }
         else if (choice == 2) {
             cout << "You drink the water and feel stronger." << endl;
 
-            changeAttack(player, +1);//F
-            changeDefense(player, +1);//F
-            changeMaxHP(player, +1);//F
+            changePlayerAttack(player, +1);         // Fixed
+            changePlayerDefense(player, +1);        // Fixed
+            changePlayerMaxHP(player, +1);          // Fixed
         }
         else if (choice == 3) {
             cout << "You collect the water and sell it for gold." << endl;
 
-            changeGold(player, +10);//F
+            changePlayerGold(player, +10);          // Fixed
         }
         else if (choice == 4) {
             cout << "You try to purify your sins." << endl;
 
-            int kindness = getKindness(player);
+            int kindness = getPlayerKindness(player);   // Fixed
 
             if (kindness < 0) {
                 cout << "Your sins are cleansed." << endl;
 
-                setKindness(player, 0);
+                setPlayerKindness(player, 0);       // Fixed: was setKindness
             } else {
                 cout << "You have no sins to cleanse." << endl;
             }
         }
     }
 
-
-        
-// event 14
+    // event 14
     else if (eventId == 14) {
 
         cout << "Guardian of the Forest" << endl;
@@ -1540,21 +1536,21 @@ void runForestEvent(int eventId, Player &player) {
 
         cout << "Prepare for battle!" << endl;
 
-        Enemy enemy = createBoss(forest_boss_id);//F and need modify
-        startBattle(player, enemy);//F
+        // Fixed: forest_boss_id undefined; use createBoss(1) = Dryad (forest boss)
+        Enemy enemy = createBoss(1);
+        startBattle(player, enemy);                 // Fixed
     }
 
-//event 15
+    // event 15
     else if (eventId == 15) {
-       runFoodCartEvent(player);
-   }
+        runFoodCartEvent(player);
+    }
 
-//event 16
+    // event 16
     else if (eventId == 16) {
-       runRevengeGodBlessingEvent(player);
-    }    
+        runRevengeGodBlessingEvent(player);
+    }
 }
-
 ```
 
 `event/mountain.cpp`:

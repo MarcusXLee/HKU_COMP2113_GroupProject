@@ -40,6 +40,8 @@
 #include <string>
 #include <cstdlib>
 #include "../player/player.h"
+#include "../enemy/enemy.h"
+#include "../event/common.h"
 // -----------------------------------------------------------------------------------------
 // EXTERNAL DEPENDENCIES (Handled by other team members)
 // -----------------------------------------------------------------------------------------
@@ -49,6 +51,7 @@
 // -----------------------------------------------------------------------------------------
 
 using namespace std;
+bool startBattle(Player &player, Enemy &enemy);
 
 // =========================================================================================
 // FUNCTION: runMountainEvent
@@ -198,10 +201,9 @@ void runMountainEvent(int eventId, Player &player) {
             cout << "You throw away your equipment and escape in panic." << endl;
 
             // Apply severe stat penalties
-            changeAttack(player, -3);   // Decrease attack power
-            changeDefense(player, -3);  // Decrease defense power
-            changeGold(player, -10);    // Decrease wallet balance
-            
+            changePlayerAttack(player, -3);   // Decrease attack power
+            changePlayerDefense(player, -3);  // Decrease defense power
+            changePlayerGold(player, -10);    // Decrease wallet balance
         }
         // Process Choice 2: The brave/reckless route
         else if (choice == 2) {
@@ -240,11 +242,11 @@ void runMountainEvent(int eventId, Player &player) {
     else if (eventId == 8) {
 
         // Display narrative text for the ambush
-        cout << "Griffin Attack!" << endl;
-        cout << "A griffin suddenly swoops down from the sky!" << endl;
+        cout << "Tiger Attack!" << endl;
+        cout << "A tiger suddenly swoops down from the sky!" << endl;
 
         // Instantiate the Griffin enemy
-        Enemy enemy = createEnemy(griffin_id);   
+        Enemy enemy = createTiger();   
         
         // Trigger the combat sequence (Execution jumps to Combat.cpp)
         startBattle(player, enemy);              
@@ -286,8 +288,8 @@ void runMountainEvent(int eventId, Player &player) {
             cout << "You kneel before the statue and offer your gold." << endl;
 
             // Apply transaction
-            changeGold(player, -20);      // Deduct funds
-            changeDefense(player, +3);    // Grant defensive blessing
+            changePlayerGold(player, -20);      // Deduct funds
+            changePlayerDefense(player, +3);    // Grant defensive blessing
             
         }
         // Process Choice 2: Defiance and curse
@@ -299,7 +301,7 @@ void runMountainEvent(int eventId, Player &player) {
             cout << "You are cursed for your arrogance." << endl;
 
             // Apply curse penalty
-            changeAttack(player, -1);     // Reduce offensive power
+            changePlayerAttack(player, -1);     // Reduce offensive power
             
         }
         // Process Invalid Input
@@ -360,7 +362,7 @@ void runMountainEvent(int eventId, Player &player) {
             cout << "You decide not to get involved." << endl;
 
             // Apply morality penalty
-            changeKindness(player, -3);   
+            changePlayerKindness(player, -3);   
             
         }
         // Process Choice 2: Engage in combat
@@ -370,7 +372,7 @@ void runMountainEvent(int eventId, Player &player) {
             cout << "You decide to stand up against the bandits!" << endl;
 
             // Instantiate Bandit enemy
-            Enemy enemy = createEnemy(bandit_id);   
+            Enemy enemy = createGoblin( );   
             
             // Trigger combat sequence
             startBattle(player, enemy);             
@@ -417,7 +419,7 @@ void runMountainEvent(int eventId, Player &player) {
             cout << "You attack the Fire Spirit." << endl;
 
             // Apply morality penalty for unprovoked attack
-            changeKindness(player, -1);   
+            changePlayerKindness(player, -1);   
 
             // Instantiate Fire Spirit enemy
             Enemy enemy = createEnemy(fire_spirit_id);  
@@ -433,9 +435,9 @@ void runMountainEvent(int eventId, Player &player) {
             cout << "You trade gold for the spirit's flame." << endl;
 
             // Apply transaction and stat boosts
-            changeGold(player, -10);     // Deduct funds
-            changeKindness(player, +1);  // Increase morality
-            changeAttack(player, +1);    // Increase offensive power
+            changePlayerGold(player, -10);     // Deduct funds
+            changePlayerKindness(player, +1);  // Increase morality
+            changePlayerAttack(player, +1);    // Increase offensive power
             
         }
         // Process Invalid Input
@@ -489,7 +491,7 @@ void runMountainEvent(int eventId, Player &player) {
             cout << "You attempt to steal the dragon egg..." << endl;
 
             // Apply morality penalty for theft
-            changeKindness(player, -1);   
+            changePlayerKindness(player, -1);   
 
             // Generate a random number between 0 and 99
             int r = rand() % 100;
@@ -501,7 +503,7 @@ void runMountainEvent(int eventId, Player &player) {
                 cout << "You successfully stole the egg without waking the dragon!" << endl;
                 
                 // Massive gold reward
-                changeGold(player, +50);  
+                changePlayerGold(player, +50);  
                 
             }
             // Determine outcome: 75% chance of failure
@@ -548,7 +550,7 @@ void runMountainEvent(int eventId, Player &player) {
         cout << "=====================================" << endl;
 
         // Instantiate the Chapter Boss
-        Enemy enemy = createEnemy(stone_giant_id);   
+        Enemy enemy = createBoss(2);   
         
         // Trigger the boss battle and capture the boolean result (Win/Loss)
         bool win = startBattle(player, enemy);       

@@ -19,7 +19,7 @@ int showDifficultyMenu()
         cout << "==============================" << endl;
         cout << "Please enter your option(1 or 2):  ";
 
-        if ( cin >> choice) 
+        if (cin >> choice) 
         {
             if (choice == EASY_MODE || choice == HARD_MODE) 
             {
@@ -39,7 +39,7 @@ int showDifficultyMenu()
 
 // 示例：在 GameManager 或 main 中调用
 void initUIFlow(Player &p) {
-    cout << "欢迎来到文本冒险游戏！" <<  endl;
+    cout << "Welcome to Adventure Game!" <<  endl;
     int diff = showDifficultyMenu();
     
     // 调用队友写好的接口创建玩家
