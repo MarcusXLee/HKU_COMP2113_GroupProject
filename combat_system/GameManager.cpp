@@ -35,7 +35,7 @@ void GameManager::gameLoop() {
         processChapter();
         
         // Check death state after chapter finishes
-        if (player.getHP() <= 0) {
+        if (getPlayerHP(player) <= 0) {
             isGameOver = true;
             uiManager.showGameOver();
         } else {
@@ -55,7 +55,7 @@ void GameManager::processChapter() {
     eventCount = 0;
 
     // Loop exactly 7 times for random events
-    while (eventCount < 7 && player.getHP() > 0) {
+    while (eventCount < 7 && getPlayerHP(player) > 0) {
         // OOP to POP
         // Generating random event ID.
         int randomEventId = rand() % 16 + 1; 
@@ -68,7 +68,7 @@ void GameManager::processChapter() {
     }
 
     // Trigger chapter boss if player survived the 7 events
-    if (player.getHP() > 0) {
+    if (getPlayerHP(player) > 0) {
         triggerBoss();
     }
 }
