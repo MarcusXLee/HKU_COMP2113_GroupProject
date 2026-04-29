@@ -3,20 +3,33 @@
 
 #include "event.h"
 #include "common.h"
+#include "../enemy/enemy.h"
+#include <cstdlib>
 
 using namespace std;
 
 class EventManager {
 public:
-    void triggerChapterEvent(int chapter, int eventId, Player &p) {
-        if (chapter == 0) runForestEvent(eventId, p);
-        else if (chapter == 1) runMountainEvent(eventId, p);
-        else if (chapter == 2) runAbyssEvent(eventId, p);
+    void triggerChapterEvent(int chapter, int eventId, Player &p, bool isHard) {
+        if (chapter == 0) {
+            runForestEvent(eventId, p);
+        }
+        else if (chapter == 1){
+            runMountainEvent(eventId, p);
+        }
+        else if (chapter == 2){
+            runAbyssEvent(eventId, p);
+        }
     }
     
     void triggerRandomEvent(Player &p) {
-        // 这里可以写逻辑随机调用 common.h 里的商人或赌博事件
-        runMerchantEvent(p); 
+        // 固定调用商人事件，或增加随机逻辑
+        runMerchantEvent(p,false); 
+    }
+
+    Enemy generateBoss(int chapter, bool isHard) {
+        // 章节 0=森林, 1=高山, 2=深渊
+        return createBoss(chapter + 1, isHard);
     }
 };
 #endif

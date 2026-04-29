@@ -6,8 +6,8 @@
 #include "../player/player.h"        // Member B
 #include "EventManager.h"  // Member C
 #include "../UI/ui.h"     // Member E
-#include "FileIO.h"        // Member D
-#include "Combat.h"        // Member B
+#include "../FileI:O/filei:o.h"        // Member D
+#include "combat.h"        // Member B
 
 // Define the linear progression of chapters
 enum class Chapter {
@@ -19,7 +19,7 @@ enum class Chapter {
 
 class GameManager {
 private:
-    bool isHardMode
+    bool isHardMode;
     Player player;
     Chapter currentChapter;
     int eventCount;

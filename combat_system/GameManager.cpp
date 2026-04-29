@@ -22,10 +22,10 @@ void GameManager::initGame() {
     // Member D: Load event texts from .txt/.json
     fileIO.loadGameData();
     
-    uiManager.displayIntro();
+    uiManager.showMainMenu();
     
     // Member B & E: Prompt difficulty and init player stats
-    int difficulty = uiManager.promptDifficulty();
+    int difficulty = uiManager.showDifficultyMenu();
     player.initStats(difficulty); 
 }
 
@@ -37,7 +37,7 @@ void GameManager::gameLoop() {
         // Check death state after chapter finishes
         if (player.getHP() <= 0) {
             isGameOver = true;
-            uiManager.displayGameOver();
+            uiManager.showGameOver();
         } else {
             advanceChapter();
         }
@@ -45,29 +45,24 @@ void GameManager::gameLoop() {
     
     // Win condition
     if (!isGameOver && currentChapter == Chapter::COMPLETED) {
-        uiManager.displayVictory();
+        uiManager.showVictory();
     }
 }
 
 // Handle the "7 random events + 1 Boss" logic
 void GameManager::processChapter() {
-    uiManager.displayChapterTitle(currentChapter);
+    uiManager.showChapterIntro(static_cast<int>(currentChapter));
     eventCount = 0;
 
     // Loop exactly 7 times for random events
     while (eventCount < 7 && player.getHP() > 0) {
-        // Member C: Dynamically allocate a random event
-        Event* currentEvent = eventManager.drawEvent(currentChapter);
-        
-        // Member E: Render the event text and choices
-        uiManager.renderEvent(currentEvent);
-        int choice = uiManager.getPlayerChoice();
-        
-        // Member C: Resolve the outcome based on player's choice
-        currentEvent->resolve(player, choice);
-        
-        // Crucial: Free dynamic memory to prevent memory leaks
-        delete currentEvent; 
+        // OOP to POP
+        // Generating random event ID.
+        int randomEventId = rand() % 16 + 1; 
+
+        // 调用 EventManager 执行对应的 procedural 函数
+        // 这里把 enum Chapter 强转为 int (0=森林, 1=高山, 2=深渊)
+        eventManager.triggerChapterEvent(static_cast<int>(currentChapter), randomEventId, player, isHardMode);
         
         eventCount++;
     }
@@ -80,14 +75,13 @@ void GameManager::processChapter() {
 
 // Spawn and fight the chapter boss
 void GameManager::triggerBoss() {
-    uiManager.displayBossWarning();
+    uiManager.printMessage("Warning: Boss is approaching!"); // fixed UI usage
     
-    // Member C: Generate specific boss based on chapter
-    Enemy boss = eventManager.generateBoss(currentChapter);
+    // Generate the BOSS of the chapter
+    Enemy boss = eventManager.generateBoss(static_cast<int>(currentChapter), isHardMode);
     
-    // Member B: Execute combat system logic
-    Combat combatSystem;
-    combatSystem.startCombat(player, boss);
+    // Using startbattle function directly
+    startBattle(player, boss, uiManager);;
 }
 
 // Move to the next stage

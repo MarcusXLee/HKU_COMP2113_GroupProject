@@ -1,5 +1,5 @@
-#ifndef UIMANAGER_H
-#define UIMANAGER_H
+#ifndef UI_H
+#define UI_H
 
 #include <string>
 #include <vector>
