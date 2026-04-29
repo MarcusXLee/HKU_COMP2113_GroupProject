@@ -242,11 +242,11 @@ void runMountainEvent(int eventId, Player &player) {
     else if (eventId == 8) {
 
         // Display narrative text for the ambush
-        cout << "Tiger Attack!" << endl;
-        cout << "A tiger suddenly swoops down from the sky!" << endl;
+        cout << "Griffon Attack!" << endl;
+        cout << "A griffon suddenly swoops down from the sky!" << endl;
 
         // Instantiate the Griffin enemy
-        Enemy enemy = createTiger();   
+        Enemy enemy = createEnemy(EnemyType::Griffon);   
         
         // Trigger the combat sequence (Execution jumps to Combat.cpp)
         startBattle(player, enemy);              
@@ -372,7 +372,7 @@ void runMountainEvent(int eventId, Player &player) {
             cout << "You decide to stand up against the bandits!" << endl;
 
             // Instantiate Bandit enemy
-            Enemy enemy = createGoblin( );   
+            Enemy enemy = createEnemy(EnemyType::Bandit);   
             
             // Trigger combat sequence
             startBattle(player, enemy);             
@@ -422,7 +422,7 @@ void runMountainEvent(int eventId, Player &player) {
             changePlayerKindness(player, -1);   
 
             // Instantiate Fire Spirit enemy
-            Enemy enemy = createEnemy(fire_spirit_id);  
+            Enemy enemy = createEnemy(EnemyType::FireSprite);  
             
             // Trigger combat sequence
             startBattle(player, enemy);                 
@@ -513,7 +513,7 @@ void runMountainEvent(int eventId, Player &player) {
                 cout << "You wake the dragon. You must face its wrath!" << endl;
 
                 // Instantiate Dragon Boss enemy
-                Enemy enemy = createEnemy(dragon_id);   
+                Enemy enemy = createEnemy(EnemyType::Dragon);   
                 
                 // Trigger deadly combat sequence
                 startBattle(player, enemy);             

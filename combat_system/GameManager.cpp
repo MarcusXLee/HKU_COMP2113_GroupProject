@@ -1,5 +1,4 @@
-// Author: yuzhenxiang6-dotcom
-#include "../combat system/GameManager.h"
+#include "../combat_system/GameManager.h"
 
 // Constructor: Initialize starting state
 GameManager::GameManager() {
