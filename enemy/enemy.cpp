@@ -5,7 +5,7 @@ static const bool HARD_MODE = false;
 
 Enemy createGoblin() {
     Enemy e;
-    e.name = "哥布林";
+    e.name = "Goblin";
     e.maxHp = HARD_MODE ? 5 : 4;
     e.hp    = e.maxHp;
     e.atk   = 2;
@@ -16,7 +16,7 @@ Enemy createGoblin() {
 
 Enemy createTiger() {
     Enemy e;
-    e.name = "猛虎";
+    e.name = "Tiger";
     e.maxHp = HARD_MODE ? 8 : 7;
     e.hp    = e.maxHp;
     e.atk   = HARD_MODE ? 5 : 4;
@@ -33,7 +33,7 @@ Enemy createBoss(int stage) {
     // 2=高山Boss(岩石巨人)
     // 3=深渊Boss(魔王)
     if (stage == 1) {
-        e.name  = "树精（BOSS）";
+        e.name  = "Dryad（BOSS）";
         e.maxHp = HARD_MODE ? 12 : 10;
         e.hp    = e.maxHp;
         e.atk   = HARD_MODE ? 6 : 5;
@@ -43,7 +43,7 @@ Enemy createBoss(int stage) {
     }
 
     if (stage == 2) {
-        e.name  = "岩石巨人（BOSS）";
+        e.name  = "RockGiant（BOSS）";
         e.maxHp = HARD_MODE ? 18 : 16;
         e.hp    = e.maxHp;
         e.atk   = HARD_MODE ? 9 : 8;
@@ -53,7 +53,7 @@ Enemy createBoss(int stage) {
     }
 
     if (stage == 3) {
-        e.name  = "魔王（BOSS）";
+        e.name  = "DemonKing（BOSS）";
         e.maxHp = HARD_MODE ? 28 : 24;
         e.hp    = e.maxHp;
         e.atk   = HARD_MODE ? 13 : 12;

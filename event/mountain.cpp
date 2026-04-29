@@ -39,7 +39,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-
+#include "../player/player.h"
 // -----------------------------------------------------------------------------------------
 // EXTERNAL DEPENDENCIES (Handled by other team members)
 // -----------------------------------------------------------------------------------------

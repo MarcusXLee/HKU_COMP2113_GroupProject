@@ -3,9 +3,9 @@
 #define GAMEMANAGER_H
 
 // Include headers that will be implemented by other members
-#include "Player.h"        // Member B
+#include "../player/player.h"        // Member B
 #include "EventManager.h"  // Member C
-#include "UIManager.h"     // Member E
+#include "../UI/ui.h"     // Member E
 #include "FileIO.h"        // Member D
 #include "Combat.h"        // Member B
 

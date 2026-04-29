@@ -1,4 +1,6 @@
 #include <iostream>
+#include "../player/player.h"
+#include "../enemy/enemy.h"
 using namespace std;
 
 void runForestEvent(int eventId, Player &player) {

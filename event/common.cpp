@@ -1,10 +1,12 @@
 #include <iostream>
 #include <cstdlib>
+#include "../player/player.h"
 using namespace std;
 
 //Blessing of the God of Battle
 
-void runBattleGodBlessingEvent(Player &player) {
+void runBattleGodBlessingEvent(Player& player)
+{
 
     cout << "Blessing of the God of Battle" << endl;
     cout << "After wandering for a while, you discover a statue of the God of Battle." << endl;
@@ -15,7 +17,8 @@ void runBattleGodBlessingEvent(Player &player) {
     int choice;
     cin >> choice;
 
-    if (choice == 1) {
+    if (choice == 1) 
+    {
         cout << "You kneel and pray for strength to defeat your enemies and avenge the Demon King." << endl;
         cout << "The God of Battle admires your courage and offers power in exchange for gold." << endl;
 
@@ -23,7 +26,8 @@ void runBattleGodBlessingEvent(Player &player) {
         changeAttack(player, +1);//F
         changeDefense(player, +1);//F
     }
-    else if (choice == 2) {
+    else if (choice == 2) 
+    {
         cout << "You believe the gods are only illusions." << endl;
         cout << "Only your own strength can lead you to revenge." << endl;
         cout << "Nothing happens." << endl;
@@ -39,7 +43,7 @@ void runJudgmentEvent(Player &player) {
     cout << "A statue of the God of Good and Evil stands in the middle of the road." << endl;
     cout << "Every traveler must accept its judgment." << endl;
 
-    int kindness = 【function: getKindness(player)】;
+    int kindness = [function: getKindness(player)];
 
     if (kindness >= 5) {
         cout << "Your kindness deserves a reward!" << endl;
@@ -58,7 +62,8 @@ void runJudgmentEvent(Player &player) {
 
         int r = rand() % 2;
 
-        if (r == 0) {
+        if (r == 0) 
+        {
             cout << "You lost 1 Attack." << endl;
             changeAttack(player, -1);//F
         }

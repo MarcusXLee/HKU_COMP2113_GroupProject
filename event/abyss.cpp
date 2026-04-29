@@ -1,4 +1,5 @@
 #include <iostream>
+#include "../player/player.h"
 using namespace std;
 
 void runAbyssEvent(int eventId, Player &player) {
