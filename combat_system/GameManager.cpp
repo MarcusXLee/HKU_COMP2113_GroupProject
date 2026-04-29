@@ -14,6 +14,8 @@ void GameManager::start() {
 }
 
 void GameManager::initGame() {
+    int choice = uiManager.showDifficultyMenu(); //Using UI
+    isHardMode = (choice == 2); //1 is False(easy), 2 is True(difficult)
     // Member E: Setup terminal settings
     uiManager.initScreen();
     

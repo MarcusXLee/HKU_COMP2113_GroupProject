@@ -8,7 +8,7 @@ bool startBattle(Player &player, Enemy &enemy);
 
 using namespace std;
 
-void runForestEvent(int eventId, Player &player) {
+void runForestEvent(int eventId, Player &player, bool isHard) {
 
     // event 1
     if (eventId == 1) {
@@ -34,7 +34,7 @@ void runForestEvent(int eventId, Player &player) {
         else if (choice == 2) {
             cout << "You refuse to give up your gold and prepare to fight!" << endl;
 
-            Enemy enemy = createGoblin();           // Fixed: was createEnemy(1) - no such function
+            Enemy enemy = createEnemy(EnemyType::Goblin, isHard);           // Fixed: was createEnemy(1) - no such function
             startBattle(player, enemy);             // Fixed: was startBattle(player, enemy) - OK
         }
     }
@@ -184,7 +184,7 @@ void runForestEvent(int eventId, Player &player) {
         if (choice == 1) {
             cout << "You decide to hunt the tiger." << endl;
 
-            Enemy enemy = createTiger();            // Fixed: was createEnemy(tiger_id)
+            Enemy enemy = createEnemy(EnemyType::Tiger, isHard);            // Fixed: was createEnemy(tiger_id)
             startBattle(player, enemy);             // Fixed
         }
         else if (choice == 2) {
@@ -250,7 +250,7 @@ void runForestEvent(int eventId, Player &player) {
         cout << "You are hurt and immediately enter battle." << endl;
 
         // Fixed: thief_id undefined; using createGoblin as stand-in
-        Enemy enemy = createGoblin();
+        Enemy enemy = createEnemy(EnemyType::Goblin,isHard);
         startBattle(player, enemy);                 // Fixed
     }
 
@@ -273,21 +273,21 @@ void runForestEvent(int eventId, Player &player) {
             cout << "You decide to hunt small prey." << endl;
 
             // Fixed: rabbit_id undefined; using createGoblin as lightest stand-in
-            Enemy enemy = createGoblin();
+            Enemy enemy = createEnemy(EnemyType::Rabbit, isHard);
             startBattle(player, enemy);             // Fixed
         }
         else if (choice == 2) {
             cout << "You decide to hunt medium prey." << endl;
 
             // Fixed: was `enemy = createEnemy(dog_id)` — enemy was undeclared in this branch
-            Enemy enemy = createGoblin();
+            Enemy enemy = createEnemy(EnemyType::Hellhound, isHard);
             startBattle(player, enemy);             // Fixed
         }
         else if (choice == 3) {
             cout << "You decide to hunt large prey." << endl;
 
             // Fixed: bear_id undefined; using createTiger as heaviest available stand-in
-            Enemy enemy = createTiger();
+            Enemy enemy = createEnemy(EnemyType::BrownBear, isHard);
             startBattle(player, enemy);             // Fixed
         }
     }
@@ -349,7 +349,7 @@ void runForestEvent(int eventId, Player &player) {
         cout << "Prepare for battle!" << endl;
 
         // Fixed: forest_boss_id undefined; use createBoss(1) = Dryad (forest boss)
-        Enemy enemy = createBoss(1);
+        Enemy enemy = createBoss(1,isHard);
         startBattle(player, enemy);                 // Fixed
     }
 

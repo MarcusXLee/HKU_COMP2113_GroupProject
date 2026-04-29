@@ -3,8 +3,8 @@
 
 #include "../player/player.h"
 
-void runForestEvent(int eventId, Player &p);
-void runMountainEvent(int eventId, Player &p);
-void runAbyssEvent(int eventId, Player &p);
+void runForestEvent(int eventId, Player &p, bool isHard);
+void runMountainEvent(int eventId, Player &p, bool isHard);
+void runAbyssEvent(int eventId, Player &p, bool isHard);
 
 #endif

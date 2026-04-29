@@ -65,7 +65,7 @@ bool startBattle(Player &player, Enemy &enemy);
 // - player (Player &): A pass-by-reference object of the main player, allowing this 
 //                      function to directly mutate their HP, Gold, and stats.
 // =========================================================================================
-void runMountainEvent(int eventId, Player &player) {
+void runMountainEvent(int eventId, Player &player, bool isHard) {
     
     // =====================================================================================
     // EVENT 1: BATTLE GOD'S BLESSING
@@ -246,7 +246,7 @@ void runMountainEvent(int eventId, Player &player) {
         cout << "A griffon suddenly swoops down from the sky!" << endl;
 
         // Instantiate the Griffin enemy
-        Enemy enemy = createEnemy(EnemyType::Griffon);   
+        Enemy enemy = createEnemy(EnemyType::Griffon, isHard);   
         
         // Trigger the combat sequence (Execution jumps to Combat.cpp)
         startBattle(player, enemy);              
@@ -372,7 +372,7 @@ void runMountainEvent(int eventId, Player &player) {
             cout << "You decide to stand up against the bandits!" << endl;
 
             // Instantiate Bandit enemy
-            Enemy enemy = createEnemy(EnemyType::Bandit);   
+            Enemy enemy = createEnemy(EnemyType::Bandit, isHard);   
             
             // Trigger combat sequence
             startBattle(player, enemy);             
@@ -422,7 +422,7 @@ void runMountainEvent(int eventId, Player &player) {
             changePlayerKindness(player, -1);   
 
             // Instantiate Fire Spirit enemy
-            Enemy enemy = createEnemy(EnemyType::FireSprite);  
+            Enemy enemy = createEnemy(EnemyType::FireSprite, isHard);  
             
             // Trigger combat sequence
             startBattle(player, enemy);                 
@@ -513,7 +513,7 @@ void runMountainEvent(int eventId, Player &player) {
                 cout << "You wake the dragon. You must face its wrath!" << endl;
 
                 // Instantiate Dragon Boss enemy
-                Enemy enemy = createEnemy(EnemyType::Dragon);   
+                Enemy enemy = createEnemy(EnemyType::Dragon, isHard);   
                 
                 // Trigger deadly combat sequence
                 startBattle(player, enemy);             
@@ -550,7 +550,7 @@ void runMountainEvent(int eventId, Player &player) {
         cout << "=====================================" << endl;
 
         // Instantiate the Chapter Boss
-        Enemy enemy = createBoss(2);   
+        Enemy enemy = createBoss(2,isHard);   
         
         // Trigger the boss battle and capture the boolean result (Win/Loss)
         bool win = startBattle(player, enemy);       

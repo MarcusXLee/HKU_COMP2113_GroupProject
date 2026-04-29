@@ -25,10 +25,7 @@ enum class EnemyType {
 };
 
 // 核心工厂接口
-Enemy createEnemy(EnemyType type);
-
-Enemy createGoblin();
-Enemy createTiger();
-Enemy createBoss(int stage);
+Enemy createEnemy(EnemyType type, bool isHard);
+Enemy createBoss(int stage, bool isHard);
 
 #endif

@@ -12,7 +12,7 @@ using namespace std;
 // Stage 3 = Abyss enemies. Specific non-boss enemies reuse createGoblin/createTiger
 // as stand-ins until the full enemy roster is fleshed out.
 
-void runAbyssEvent(int eventId, Player &player) {
+void runAbyssEvent(int eventId, Player &player, bool isHard) {
 
     // event 1
     if (eventId == 1) {
@@ -70,9 +70,7 @@ void runAbyssEvent(int eventId, Player &player) {
         }
         else if (choice == 2) {
             cout << "You decide to destroy the evil creature." << endl;
-
-            // Fixed: evil_creature_id undefined; using createGoblin as stand-in
-            Enemy enemy = createGoblin();
+            Enemy enemy = createEnemy(EnemyType::EvilCreature, isHard);
             startBattle(player, enemy);
         }
         else {
@@ -86,9 +84,7 @@ void runAbyssEvent(int eventId, Player &player) {
         cout << "Dragon Soldier" << endl;
         cout << "Dragon soldiers are servants of the Demon King." << endl;
         cout << "They are hunting you in the abyss." << endl;
-
-        // Fixed: dragon_soldier_id undefined; using createTiger as stand-in
-        Enemy enemy = createTiger();
+        Enemy enemy = createEnemy(EnemyType::DragonkinSoldier, isHard);
         startBattle(player, enemy);
     }
 
@@ -98,9 +94,7 @@ void runAbyssEvent(int eventId, Player &player) {
         cout << "Great Demon!" << endl;
         cout << "A Great Demon stands before you." << endl;
         cout << "Its hands are stained with human blood." << endl;
-
-        // Fixed: greater_demon_id undefined; using createBoss(2) as stand-in
-        Enemy enemy = createBoss(2);
+        Enemy enemy = createBoss(3, isHard);
         startBattle(player, enemy);
     }
 
@@ -285,9 +279,7 @@ void runAbyssEvent(int eventId, Player &player) {
         cout << "Demon King!" << endl;
         cout << "At last, you stand before the Demon King." << endl;
         cout << "The time has come to face your greatest enemy." << endl;
-
-        // Fixed: demon_king_id undefined; use createBoss(3) = DemonKing
-        Enemy enemy = createBoss(3);
+        Enemy enemy = createBoss(3, isHard); //Fixed
         bool win = startBattle(player, enemy);      // Fixed
 
         if (win) {

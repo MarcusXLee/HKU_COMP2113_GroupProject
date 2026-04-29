@@ -19,6 +19,7 @@ enum class Chapter {
 
 class GameManager {
 private:
+    bool isHardMode
     Player player;
     Chapter currentChapter;
     int eventCount;

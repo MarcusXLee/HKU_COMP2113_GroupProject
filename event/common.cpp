@@ -92,7 +92,7 @@ void runJudgmentEvent(Player &player) {
 // ---------------------------------------------------------------------------
 // Wandering Merchant
 // ---------------------------------------------------------------------------
-void runMerchantEvent(Player &player) {
+void runMerchantEvent(Player &player, bool isHard) {
 
     cout << "Wandering Merchant" << endl;
     cout << "A wandering merchant offers many goods for sale." << endl;
@@ -160,7 +160,7 @@ void runMerchantEvent(Player &player) {
 
         // Fixed: createEnemy takes an int stage; use stage 1 (weakest enemy) as a
         // stand-in for the merchant until a dedicated merchant enemy ID is defined.
-        Enemy enemy = createGoblin();
+        Enemy enemy = createEnemy(EnemyType::WanderingMerchant_Forest, isHard);
         startBattle(player, enemy);
     }
 }
