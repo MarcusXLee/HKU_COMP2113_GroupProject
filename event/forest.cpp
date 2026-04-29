@@ -116,7 +116,7 @@ void runForestEvent(int eventId, Player &player, bool isHard) {
 
     // event 6
     else if (eventId == 6) {
-        runMerchantEvent(player);
+        runMerchantEvent(player,isHard);
     }
 
     // event 7

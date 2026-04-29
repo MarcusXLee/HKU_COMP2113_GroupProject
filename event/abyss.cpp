@@ -26,7 +26,7 @@ void runAbyssEvent(int eventId, Player &player, bool isHard) {
 
     // event 3
     else if (eventId == 3) {
-        runMerchantEvent(player);
+        runMerchantEvent(player, isHard);
     }
 
     // event 4
