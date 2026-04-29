@@ -12,19 +12,19 @@ class EventManager {
 public:
     void triggerChapterEvent(int chapter, int eventId, Player &p, bool isHard) {
         if (chapter == 0) {
-            runForestEvent(eventId, p);
+            runForestEvent(eventId, p, isHard);
         }
         else if (chapter == 1){
-            runMountainEvent(eventId, p);
+            runMountainEvent(eventId, p, isHard);
         }
         else if (chapter == 2){
-            runAbyssEvent(eventId, p);
+            runAbyssEvent(eventId, p, isHard);
         }
     }
     
     void triggerRandomEvent(Player &p) {
         // 固定调用商人事件，或增加随机逻辑
-        runMerchantEvent(p,false); 
+        runMerchantEvent(p, false); 
     }
 
     Enemy generateBoss(int chapter, bool isHard) {

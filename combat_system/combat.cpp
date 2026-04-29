@@ -1,5 +1,5 @@
 // Combat.cpp 实现
-#include "Combat.h"
+#include "combat.h"
 #include <iostream>
 #include <cmath>
 
