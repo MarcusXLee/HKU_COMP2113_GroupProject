@@ -1,4 +1,3 @@
-// Combat.cpp 实现
 #include "combat.h"
 #include <iostream>
 #include <cmath>
