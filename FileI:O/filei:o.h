@@ -3,25 +3,36 @@
 
 #include <string>
 #include <iostream>
+#include "../player/player.h"   // needed for Player struct
 
 class FileIO {
 private:
     std::string logFileName;
+    std::string saveFileName;
 
 public:
-    // 构造函数，初始化时可以清空旧日志或写入启动时间
     FileIO();
-    
-    // 负责系统初始化时的一些读取或检查
+ 
+    // Checks / pre-loads any required local resources.
     void loadGameData();
-
-    // 核心功能 1：追加写入日志
-    // 示例用法：fileIO.writeLog("Player entered Forest. Event 3 triggered.");
+ 
+    // Appends a timestamped entry to game_log.txt.
     void writeLog(const std::string& message);
-
-    // 核心功能 2：读取外部文本文件（比如 ASCII Art，或者幽默语录）
-    // 返回一个 string 数组，每一行是数组的一个元素
+ 
+    // Reads every line of a plain-text file and returns them as a vector.
     std::vector<std::string> readTextFile(const std::string& filename);
+ 
+    // ── Task 2: Persistence ───────────────────────────────────────────────
+ 
+    // Writes the current game state (player stats + chapter) to save.txt
+    // using std::ofstream.
+    // chapterIndex: 0 = Forest, 1 = Mountain, 2 = Abyss, 3 = Completed
+    // isHardMode: stored so the game can restore the correct difficulty.
+    void saveGame(const Player &p, int chapterIndex, bool isHardMode);
+ 
+    // Reads save.txt with std::ifstream and fills the out-parameters.
+    // Returns true on success, false if the file does not exist or is corrupt.
+    bool loadGame(Player &p, int &chapterIndex, bool &isHardMode);
 };
 
 #endif
