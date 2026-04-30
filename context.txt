@@ -1,0 +1,2332 @@
+Project Path: HKU_COMP2113_GroupProject
+
+Source Tree:
+
+```txt
+HKU_COMP2113_GroupProject
+├── FileI:O
+│   ├── filei:o.cpp
+│   └── filei:o.h
+├── UI
+│   ├── ui.cpp
+│   └── ui.h
+├── combat_system
+│   ├── GameManager.cpp
+│   ├── GameManager.h
+│   ├── combat.cpp
+│   ├── combat.h
+│   └── main.cpp
+├── enemy
+│   ├── enemy.cpp
+│   └── enemy.h
+├── event
+│   ├── EventManager.h
+│   ├── abyss.cpp
+│   ├── common.cpp
+│   ├── common.h
+│   ├── event.h
+│   ├── forest.cpp
+│   └── mountain.cpp
+└── player
+    ├── player.cpp
+    └── player.h
+
+```
+
+`FileI:O/filei:o.cpp`:
+
+```cpp
+#include "filei:o.h"
+#include <iostream>
+#include <fstream>
+#include <ctime>
+
+// Setting the name of log
+FileIO::FileIO() {
+    logFileName = "game_log.txt";
+    
+    // Writing the launching mark into log
+    std::ofstream logFile(logFileName, std::ios::app);
+    if (logFile.is_open()) {
+        logFile << "\n========================================\n";
+        logFile << "[SYSTEM] Game Session Started\n";
+        logFile << "========================================\n";
+        logFile.close();
+    }
+}
+
+void FileIO::loadGameData() {
+    std::cout << "[System] Checking local resources..." << std::endl;
+    // For future improvement
+    std::cout << "[System] Game data loaded successfully." << std::endl;
+}
+
+// Generate log.txt
+void FileIO::writeLog(const std::string& message) {
+    // Ensuring the old log would not be covered
+    std::ofstream logFile(logFileName, std::ios::app);
+    
+    if (logFile.is_open()) {
+        logFile << "[LOG] " << message << std::endl;
+        logFile.close();
+    } else {
+        // Error report
+        std::cerr << "[Error] Unable to open log file: " << logFileName << std::endl;
+    }
+}
+
+//Reading text
+std::vector<std::string> FileIO::readTextFile(const std::string& filename) {
+    std::vector<std::string> lines;
+    std::ifstream inFile(filename);
+    std::string line;
+
+    if (inFile.is_open()) {
+        // Reading file content
+        while (std::getline(inFile, line)) {
+            lines.push_back(line);
+        }
+        inFile.close();
+    } else {
+        std::cerr << "[Warning] Could not read text file: " << filename << std::endl;
+        // Error report
+        lines.push_back("Error 404: Text not found."); 
+    }
+
+    return lines;
+}
+```
+
+`FileI:O/filei:o.h`:
+
+```h
+#ifndef FILEIO_H
+#define FILEIO_H
+
+#include <string>
+#include <iostream>
+
+class FileIO {
+private:
+    std::string logFileName;
+
+public:
+    // 构造函数，初始化时可以清空旧日志或写入启动时间
+    FileIO();
+    
+    // 负责系统初始化时的一些读取或检查
+    void loadGameData();
+
+    // 核心功能 1：追加写入日志
+    // 示例用法：fileIO.writeLog("Player entered Forest. Event 3 triggered.");
+    void writeLog(const std::string& message);
+
+    // 核心功能 2：读取外部文本文件（比如 ASCII Art，或者幽默语录）
+    // 返回一个 string 数组，每一行是数组的一个元素
+    std::vector<std::string> readTextFile(const std::string& filename);
+};
+
+#endif
+```
+
+`UI/ui.cpp`:
+
+```cpp
+#include <iostream>
+#include <string>
+#include <limits>
+#include "ui.h"
+#include "../player/player.h"
+
+using namespace std;
+
+//Choosing Difficulty level
+int showDifficultyMenu() 
+{
+    int choice;
+    while (true) 
+    {
+        cout << "==============================" << endl;
+        cout << "       Please select your difficulty level        " << endl;
+        cout << "       1. Simple      " << endl;
+        cout << "       2. Challenging      " << endl;
+        cout << "==============================" << endl;
+        cout << "Please enter your option(1 or 2):  ";
+
+        if (cin >> choice) 
+        {
+            if (choice == EASY_MODE || choice == HARD_MODE) 
+            {
+                return choice;
+            }
+        }
+
+        //Invalid input
+        cout << "\nInvalid input, please enter 1 or 2." <<  endl;
+        
+        //Remove error note
+        cin.clear(); 
+        //Ignore invalid characters
+        cin.ignore( numeric_limits< streamsize>::max(), '\n');
+    }
+}
+
+// 示例：在 GameManager 或 main 中调用
+void initUIFlow(Player &p) {
+    cout << "Welcome to Adventure Game!" <<  endl;
+    int diff = showDifficultyMenu();
+    
+    // 调用队友写好的接口创建玩家
+    p = createPlayer(diff); 
+    
+    cout << "\nInitialized successfully! Current HP: " << getPlayerHP(p) <<  endl;
+}
+```
+
+`UI/ui.h`:
+
+```h
+#ifndef UI_H
+#define UI_H
+
+#include <string>
+#include <vector>
+#include "../player/player.h"
+#include "../enemy/enemy.h"   
+
+class UIManager 
+{
+public:
+    UIManager() = default;
+    int showMainMenu();
+    int showDifficultyMenu();
+    void showChapterIntro(int chapterId);
+    void displayBattleStatus(const Player &p, const Enemy &e);
+    int getBattleChoice();
+    int showUpgradeMenu();
+    void printMessage(const std::string &message);
+    void showGameOver();
+    void showVictory();
+
+private:
+    int getValidInput(int min, int max);
+    void clearScreen();
+};
+
+#endif
+```
+
+`combat_system/GameManager.cpp`:
+
+```cpp
+#include "../combat_system/GameManager.h"
+
+// Constructor: Initialize starting state
+GameManager::GameManager() {
+    currentChapter = Chapter::FOREST;
+    eventCount = 0;
+    isGameOver = false;
+}
+
+// Public method to kick off the game
+void GameManager::start() {
+    initGame();
+    gameLoop();
+}
+
+void GameManager::initGame() {
+    int choice = uiManager.showDifficultyMenu(); //Using UI
+    isHardMode = (choice == 2); //1 is False(easy), 2 is True(difficult)
+    // Member E: Setup terminal settings
+    uiManager.initScreen();
+    
+    // Member D: Load event texts from .txt/.json
+    fileIO.loadGameData();
+    
+    uiManager.showMainMenu();
+    
+    // Member B & E: Prompt difficulty and init player stats
+    int difficulty = uiManager.showDifficultyMenu();
+    player.initStats(difficulty); 
+}
+
+// The core Game Loop
+void GameManager::gameLoop() {
+    while (!isGameOver && currentChapter != Chapter::COMPLETED) {
+        processChapter();
+        
+        // Check death state after chapter finishes
+        if (getPlayerHP(player) <= 0) {
+            isGameOver = true;
+            uiManager.showGameOver();
+        } else {
+            advanceChapter();
+        }
+    }
+    
+    // Win condition
+    if (!isGameOver && currentChapter == Chapter::COMPLETED) {
+        uiManager.showVictory();
+    }
+}
+
+// Handle the "7 random events + 1 Boss" logic
+void GameManager::processChapter() {
+    uiManager.showChapterIntro(static_cast<int>(currentChapter));
+    eventCount = 0;
+
+    // Loop exactly 7 times for random events
+    while (eventCount < 7 && getPlayerHP(player) > 0) {
+        // OOP to POP
+        // Generating random event ID.
+        int randomEventId = rand() % 16 + 1; 
+
+        // 调用 EventManager 执行对应的 procedural 函数
+        // 这里把 enum Chapter 强转为 int (0=森林, 1=高山, 2=深渊)
+        eventManager.triggerChapterEvent(static_cast<int>(currentChapter), randomEventId, player, isHardMode);
+        
+        eventCount++;
+    }
+
+    // Trigger chapter boss if player survived the 7 events
+    if (getPlayerHP(player) > 0) {
+        triggerBoss();
+    }
+}
+
+// Spawn and fight the chapter boss
+void GameManager::triggerBoss() {
+    uiManager.printMessage("Warning: Boss is approaching!"); // fixed UI usage
+    
+    // Generate the BOSS of the chapter
+    Enemy boss = eventManager.generateBoss(static_cast<int>(currentChapter), isHardMode);
+    
+    // Using startbattle function directly
+    startBattle(player, boss, uiManager);;
+}
+
+// Move to the next stage
+void GameManager::advanceChapter() {
+    switch (currentChapter) {
+        case Chapter::FOREST:   
+            currentChapter = Chapter::MOUNTAIN; 
+            break;
+        case Chapter::MOUNTAIN: 
+            currentChapter = Chapter::ABYSS;    
+            break;
+        case Chapter::ABYSS:    
+            currentChapter = Chapter::COMPLETED; 
+            break;
+        default: 
+            break;
+    }
+}
+```
+
+`combat_system/GameManager.h`:
+
+```h
+// Author: yuzhenxiang6-dotcom
+#ifndef GAMEMANAGER_H
+#define GAMEMANAGER_H
+
+// Include headers that will be implemented by other members
+#include "../player/player.h"        // Member B
+#include "EventManager.h"  // Member C
+#include "../UI/ui.h"     // Member E
+#include "../FileI:O/filei:o.h"        // Member D
+#include "combat.h"        // Member B
+
+// Define the linear progression of chapters
+enum class Chapter {
+    FOREST,
+    MOUNTAIN,
+    ABYSS,
+    COMPLETED
+};
+
+class GameManager {
+private:
+    bool isHardMode;
+    Player player;
+    Chapter currentChapter;
+    int eventCount;
+    bool isGameOver;
+
+    // Module managers implemented by teammates
+    EventManager eventManager;
+    UIManager uiManager;
+    FileIO fileIO;
+
+    // Core private flow control methods
+    void initGame();
+    void gameLoop();
+    void processChapter();
+    void triggerBoss();
+    void advanceChapter();
+
+public:
+    GameManager();
+    void start();
+};
+
+#endif
+```
+
+`combat_system/combat.cpp`:
+
+```cpp
+#include "combat.h"
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+bool startBattle(Player &player, Enemy &enemy, UIManager &ui) 
+{
+    // Special Mechanism: Demon King's settings adjusted based on Kindness
+    if (enemy.name == "DemonKing(BOSS)") 
+    {
+        int k = player.kindness; //get kindness
+        enemy.atk -= k;
+        enemy.def -= k;
+    }
+
+    // Main Loop for Battle
+    while (player.hp > 0 && enemy.hp > 0) 
+    {
+        ui.displayBattleStatus(player, enemy);
+        int choice = ui.getBattleChoice(); // 1.Fight 2.Flight
+
+        if (choice == 2) { // Flee
+            int penalty = player.maxHp * 0.2;
+            player.hp -= penalty;
+            cout << "You fled and lost" << penalty << "HP" << endl;
+            return false; 
+        }
+
+        // Attack
+        int dmgToEnemy = std::max(1, player.attack - enemy.def);
+        enemy.hp -= dmgToEnemy;
+        std::cout << "You caused " << dmgToEnemy << " points of damage to" << enemy.name << std::endl;
+
+        if (enemy.hp <= 0) {
+            // Dryad's revival
+            if (enemy.extraLives > 0) 
+            {
+                enemy.extraLives--;
+                enemy.hp = enemy.maxHp;
+                cout << enemy.name << "revived!" << endl;
+                continue;
+            }
+            cout << "You defeated" << enemy.name << "!" << endl;
+            return true;
+        }
+
+        // Enemy Attack
+        int dmgToPlayer = max(1, enemy.atk - player.defense);
+        player.hp -= dmgToPlayer;
+        cout << enemy.name << " caused" << dmgToPlayer << " points of harm to you" << endl;
+    }
+    return player.hp > 0;
+}
+```
+
+`combat_system/combat.h`:
+
+```h
+#ifndef COMBAT_H
+#define COMBAT_H
+
+#include "../player/player.h"
+#include "../enemy/enemy.h"
+#include "../UI/ui.h"
+
+// 统一采用全局函数的写法，与你的 combat.cpp 以及各路事件中的调用保持一致
+bool startBattle(Player &player, Enemy &enemy, UIManager &ui);
+
+// 重载版本，供 event/xxx.cpp 中的旧代码调用（如果他们在内部不传 ui 对象）
+// 你可以在 combat.cpp 中给 UIManager 一个默认行为，或者要求所有 startBattle 必须传入 UIManager。
+bool startBattle(Player &player, Enemy &enemy);
+
+#endif
+```
+
+`combat_system/main.cpp`:
+
+```cpp
+#include <ctime>
+#include <cstdlib>
+#include "GameManager.h"
+
+int main() {
+    srand(time(NULL));//Initialize random seed
+    GameManager game;
+    game.start();
+    return 0;
+}
+```
+
+`enemy/enemy.cpp`:
+
+```cpp
+#include "enemy.h"
+
+// 难度开关：false=简单，true=困难
+static const bool HARD_MODE = false;
+
+// 内部辅助函数，封装生成逻辑
+static Enemy makeEnemy(const std::string& name, int baseHp, int baseAtk, int baseDef, bool isHard, int extraLives = 0) {
+    Enemy e;
+    e.name = name;
+    
+    // 难度加成算法：困难模式下数值提升
+    float multiplier = isHard ? 1.5f : 1.0f; // 困难模式 1.5 倍
+    
+    e.maxHp = static_cast<int>(baseHp * multiplier);
+    e.hp = e.maxHp;
+    e.atk = static_cast<int>(baseAtk * (isHard ? 1.3f : 1.0f)); // 攻击力不宜加太多，否则容易暴死
+    e.def = static_cast<int>(baseDef * (isHard ? 1.2f : 1.0f));
+    e.extraLives = extraLives;
+    return e;
+}
+
+Enemy createEnemy(EnemyType type, bool isHard) 
+{
+    switch (type) {
+        // ===== 森林 =====
+        case EnemyType::Goblin:                     return makeEnemy("Goblin", 4, 2, 0, isHard);
+        case EnemyType::WanderingMerchant_Forest:   return makeEnemy("Merchant (Forest)", 8, 6, 5, isHard);
+        case EnemyType::Tiger:                      return makeEnemy("Tiger", 7, 4, 1, isHard);
+        case EnemyType::Thief:                      return makeEnemy("Thief", 5, 3, 1, isHard);
+        case EnemyType::Rabbit:                     return makeEnemy("Rabbit", 1, 0, 0, isHard);
+        case EnemyType::Hellhound:                  return makeEnemy("Hellhound", 4, 2, 0, isHard);
+        case EnemyType::BrownBear:                  return makeEnemy("Brown Bear", 8, 4, 2, isHard);
+        case EnemyType::TreantBoss:                 return makeEnemy("Dryad (BOSS)", 10, 5, 3, 1, isHard);
+
+        // ===== 高山 =====
+        case EnemyType::Griffon:                    return makeEnemy("Griffin", 10, 5, 2, isHard);
+        case EnemyType::Bandit:                     return makeEnemy("Bandit", 4, 3, 1, isHard);
+        case EnemyType::FireSprite:                 return makeEnemy("Fire Spirit", 8, 7, 0, isHard);
+        case EnemyType::Dragon:                     return makeEnemy("Dragon", 12,7,4, isHard);
+        case EnemyType::WanderingMerchant_Mountain: return makeEnemy("Merchant (Mountain)", 10, 7, 5, isHard);
+        case EnemyType::RockGiantBoss:              return makeEnemy("Rock Giant (BOSS)", 16, 8, 7, isHard);
+
+        // ===== 深渊 =====
+        case EnemyType::EvilCreature:               return makeEnemy("Evil Creature", 14, 8, 6, isHard);
+        case EnemyType::DragonkinSoldier:           return makeEnemy("Dragon Soldier", 14, 8, 7, isHard);
+        case EnemyType::ArchDemon:                  return makeEnemy("Great Demon", 18, 9, 8, isHard);
+        case EnemyType::WanderingMerchant_Abyss:    return makeEnemy("Merchant (Abyss)", 12,7,6, isHard);
+        case EnemyType::DemonKingBoss:              return makeEnemy("Demon King (BOSS)", 24, 12, 10, isHard);
+    }
+
+    return makeEnemy("Unknown", 1, 0, 0, isHard);
+}
+
+Enemy createBoss(int stage, bool isHard) {
+    if (stage == 1) return createEnemy(EnemyType::TreantBoss, isHard);
+    if (stage == 2) return createEnemy(EnemyType::RockGiantBoss, isHard);
+    if (stage == 3) return createEnemy(EnemyType::DemonKingBoss, isHard);
+    return createEnemy(EnemyType::TreantBoss, isHard);
+}
+```
+
+`enemy/enemy.h`:
+
+```h
+#ifndef ENEMY_H
+#define ENEMY_H
+#include <string>
+
+using namespace std;
+
+struct Enemy {
+    string name;
+    int maxHp;
+    int hp;
+    int atk;
+    int def;
+    // 树精：需要击败两次 => extraLives = 1
+    // 普通敌人 => extraLives = 0
+    int extraLives;
+};
+
+enum class EnemyType {
+    // 森林敌人
+    Goblin, WanderingMerchant_Forest, Tiger, Thief, Rabbit, Hellhound, BrownBear, TreantBoss,
+    // 高山敌人
+    Griffon, Bandit, FireSprite, Dragon, WanderingMerchant_Mountain, RockGiantBoss,
+    // 深渊敌人
+    EvilCreature, DragonkinSoldier, ArchDemon, WanderingMerchant_Abyss, DemonKingBoss
+};
+
+// 核心工厂接口
+Enemy createEnemy(EnemyType type, bool isHard);
+Enemy createBoss(int stage, bool isHard);
+
+#endif
+```
+
+`event/EventManager.h`:
+
+```h
+#ifndef EVENTMANAGER_H
+#define EVENTMANAGER_H
+
+#include "event.h"
+#include "common.h"
+#include "../enemy/enemy.h"
+#include <cstdlib>
+
+using namespace std;
+
+class EventManager {
+public:
+    void triggerChapterEvent(int chapter, int eventId, Player &p, bool isHard) {
+        if (chapter == 0) {
+            runForestEvent(eventId, p, isHard);
+        }
+        else if (chapter == 1){
+            runMountainEvent(eventId, p, isHard);
+        }
+        else if (chapter == 2){
+            runAbyssEvent(eventId, p, isHard);
+        }
+    }
+    
+    void triggerRandomEvent(Player &p) {
+        // 固定调用商人事件，或增加随机逻辑
+        runMerchantEvent(p, false); 
+    }
+
+    Enemy generateBoss(int chapter, bool isHard) {
+        // 章节 0=森林, 1=高山, 2=深渊
+        return createBoss(chapter + 1, isHard);
+    }
+};
+#endif
+```
+
+`event/abyss.cpp`:
+
+```cpp
+#include <iostream>
+#include <cstdlib>
+#include "../player/player.h"
+#include "../enemy/enemy.h"
+#include "common.h"
+// Forward-declare startBattle until Combat.h is finalised.
+bool startBattle(Player &player, Enemy &enemy);
+
+using namespace std;
+
+// Enemy stage IDs used in this chapter (must match createBoss/createEnemy conventions).
+// Stage 3 = Abyss enemies. Specific non-boss enemies reuse createGoblin/createTiger
+// as stand-ins until the full enemy roster is fleshed out.
+
+void runAbyssEvent(int eventId, Player &player, bool isHard) {
+
+    // event 1
+    if (eventId == 1) {
+        runBattleGodBlessingEvent(player);
+    }
+
+    // event 2
+    else if (eventId == 2) {
+        runJudgmentEvent(player);
+    }
+
+    // event 3
+    else if (eventId == 3) {
+        runMerchantEvent(player, isHard);
+    }
+
+    // event 4
+    else if (eventId == 4) {
+        runGamblingEvent(player);
+    }
+
+    // event 5
+    else if (eventId == 5) {
+        runFoodCartEvent(player);
+    }
+
+    // event 6
+    else if (eventId == 6) {
+        runRevengeGodBlessingEvent(player);
+    }
+
+    // event 7
+    else if (eventId == 7) {
+        runMasterHermitEvent(player);
+    }   // Fixed: closing brace was missing here; events 8-16 were nested inside event 7
+
+    // event 8
+    else if (eventId == 8) {
+
+        cout << "Evil Creature" << endl;
+        cout << "In the abyss, you encounter an indescribable evil creature approaching you." << endl;
+
+        cout << "1. Avoid it" << endl;
+        cout << "2. Destroy it" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "You avoid the evil creature, but you are still cursed by it." << endl;
+
+            changePlayerAttack(player, -3);     // Fixed: was changeAttack
+            changePlayerDefense(player, -2);    // Fixed: was changeDefense
+            changePlayerMaxHP(player, -1);      // Fixed: was changeMaxHP
+        }
+        else if (choice == 2) {
+            cout << "You decide to destroy the evil creature." << endl;
+            Enemy enemy = createEnemy(EnemyType::EvilCreature, isHard);
+            startBattle(player, enemy);
+        }
+        else {
+            cout << "Invalid choice. Nothing happens." << endl;
+        }
+    }
+
+    // event 9
+    else if (eventId == 9) {
+
+        cout << "Dragon Soldier" << endl;
+        cout << "Dragon soldiers are servants of the Demon King." << endl;
+        cout << "They are hunting you in the abyss." << endl;
+        Enemy enemy = createEnemy(EnemyType::DragonkinSoldier, isHard);
+        startBattle(player, enemy);
+    }
+
+    // event 10
+    else if (eventId == 10) {
+
+        cout << "Great Demon!" << endl;
+        cout << "A Great Demon stands before you." << endl;
+        cout << "Its hands are stained with human blood." << endl;
+        Enemy enemy = createBoss(3, isHard);
+        startBattle(player, enemy);
+    }
+
+    // event 11
+    else if (eventId == 11) {
+
+        cout << "The Gaze from the End of the Abyss" << endl;
+        cout << "The existence at the end of the abyss seems to have sensed your arrival." << endl;
+        cout << "You feel that some terrifying being is watching you from the darkness." << endl;
+
+        changePlayerAttack(player, -3);     // Fixed
+        changePlayerDefense(player, -3);    // Fixed
+        changePlayerMaxHP(player, -3);      // Fixed
+    }
+
+    // event 12
+    else if (eventId == 12) {
+
+        cout << "The God of Good and Evil Descends!" << endl;
+        cout << "The God of Good and Evil enters your dream." << endl;
+        cout << "It is time for judgment based on everything you have done on your journey." << endl;
+
+        int kindness = getPlayerKindness(player);   // Fixed: was getKindness
+
+        if (kindness >= 10) {
+            cout << "Your soul has reached a higher state. All your powers are doubled!" << endl;
+
+            int atk   = getPlayerAttack(player);    // Fixed: was getAttack
+            int def   = getPlayerDefense(player);   // Fixed: was getDefense
+            int maxHP = getPlayerMaxHP(player);     // Fixed: was getMaxHP
+            int hp    = getPlayerHP(player);        // Fixed: was getHP
+
+            changePlayerAttack(player, atk);        // Fixed
+            changePlayerDefense(player, def);       // Fixed
+            changePlayerMaxHP(player, maxHP);       // Fixed
+            healPlayer(player, hp);                 // Fixed
+        }
+        else if (kindness >= 5) {
+            cout << "Your actions are worthy of a great blessing." << endl;
+
+            int r = rand() % 3;
+
+            if (r == 0) {
+                int atk = getPlayerAttack(player);
+                int def = getPlayerDefense(player);
+
+                changePlayerAttack(player, atk);    // Fixed
+                changePlayerDefense(player, def);   // Fixed
+
+                cout << "Your Attack and Defense are doubled!" << endl;
+            }
+            else if (r == 1) {
+                int atk   = getPlayerAttack(player);
+                int maxHP = getPlayerMaxHP(player);
+                int hp    = getPlayerHP(player);
+
+                changePlayerAttack(player, atk);    // Fixed
+                changePlayerMaxHP(player, maxHP);   // Fixed
+                healPlayer(player, hp);             // Fixed
+
+                cout << "Your Attack and HP are doubled!" << endl;
+            }
+            else {
+                int def   = getPlayerDefense(player);
+                int maxHP = getPlayerMaxHP(player);
+                int hp    = getPlayerHP(player);
+
+                changePlayerDefense(player, def);   // Fixed
+                changePlayerMaxHP(player, maxHP);   // Fixed
+                healPlayer(player, hp);             // Fixed
+
+                cout << "Your Defense and HP are doubled!" << endl;
+            }
+        }
+        else if (kindness >= 0) {
+            cout << "You receive a modest blessing." << endl;
+
+            int r = rand() % 3;
+
+            if (r == 0) {
+                int atk = getPlayerAttack(player);
+                changePlayerAttack(player, atk);    // Fixed
+                cout << "Your Attack is doubled!" << endl;
+            }
+            else if (r == 1) {
+                int def = getPlayerDefense(player);
+                changePlayerDefense(player, def);   // Fixed
+                cout << "Your Defense is doubled!" << endl;
+            }
+            else {
+                int maxHP = getPlayerMaxHP(player);
+                int hp    = getPlayerHP(player);
+
+                changePlayerMaxHP(player, maxHP);   // Fixed
+                healPlayer(player, hp);             // Fixed
+
+                cout << "Your HP is doubled!" << endl;
+            }
+        }
+        else {
+            cout << "Your actions invite punishment instead of blessing." << endl;
+
+            int r = rand() % 3;
+
+            if (r == 0) {
+                int atk = getPlayerAttack(player) / 2;
+                changePlayerAttack(player, -atk);   // Fixed
+                cout << "Your Attack is halved!" << endl;
+            }
+            else if (r == 1) {
+                int def = getPlayerDefense(player) / 2;
+                changePlayerDefense(player, -def);  // Fixed
+                cout << "Your Defense is halved!" << endl;
+            }
+            else {
+                int maxHP = getPlayerMaxHP(player) / 2;
+                int hp    = getPlayerHP(player) / 2;
+
+                changePlayerMaxHP(player, -maxHP);  // Fixed
+                damagePlayer(player, hp);           // Fixed
+
+                cout << "Your HP is halved!" << endl;
+            }
+        }
+    }
+
+    // event 13
+    else if (eventId == 13) {
+
+        cout << "Encouragement of the God of Revenge!" << endl;
+        cout << "The God of Revenge admires your courage for entering the abyss alone." << endl;
+        cout << "For once, the god decides to be generous." << endl;
+
+        int lostHP = getPlayerMaxHP(player) - getPlayerHP(player);  // Fixed
+        changePlayerAttack(player, lostHP);                         // Fixed
+
+        cout << "Your pain has been transformed into strength." << endl;
+        cout << "You gained " << lostHP << " Attack." << endl;
+    }
+
+    // event 14
+    else if (eventId == 14) {
+
+        cout << "Hope!" << endl;
+        cout << "In the abyss, you find the remains of a fallen adventurer." << endl;
+        cout << "A noble soul rises from the bones and grants you hope to defeat the Demon King." << endl;
+
+        changePlayerKindness(player, +5);   // Fixed
+    }
+
+    // event 15
+    else if (eventId == 15) {
+
+        cout << "The God of Battle Descends!" << endl;
+        cout << "The God of Battle enters your dream and demands all the treasure you have collected." << endl;
+        cout << "Do not worry. The god promises a fair trade." << endl;
+
+        cout << "1. Deal!" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            int gold = getPlayerGold(player);       // Fixed: was getGold
+            int gain = gold / 10;
+
+            setPlayerGold(player, 0);               // Fixed: was loseAllGold
+            changePlayerAttack(player, gain);       // Fixed
+            changePlayerDefense(player, gain);      // Fixed
+
+            cout << "You gave up all your gold." << endl;
+            cout << "You gained " << gain << " Attack and " << gain << " Defense." << endl;
+        }
+        else {
+            cout << "Invalid choice. Nothing happens." << endl;
+        }
+    }
+
+    // event 16
+    else if (eventId == 16) {
+
+        cout << "Demon King!" << endl;
+        cout << "At last, you stand before the Demon King." << endl;
+        cout << "The time has come to face your greatest enemy." << endl;
+        Enemy enemy = createBoss(3, isHard); //Fixed
+        bool win = startBattle(player, enemy);      // Fixed
+
+        if (win) {
+            cout << "You defeated the Demon King!" << endl;
+            cout << "Your revenge is complete." << endl;
+        }
+        else {
+            cout << "You were defeated by the Demon King..." << endl;
+        }
+    }
+}
+```
+
+`event/common.cpp`:
+
+```cpp
+#include <iostream>
+#include <cstdlib>
+#include "../player/player.h"
+#include "../enemy/enemy.h"
+#include "common.h"
+// Note: startBattle() is declared in combat system/Combat.h.
+// Add: #include "../combat system/Combat.h"  once that header is finalised.
+// For now we forward-declare it so every event file compiles independently.
+bool startBattle(Player &player, Enemy &enemy);
+
+using namespace std;
+
+// ---------------------------------------------------------------------------
+// Blessing of the God of Battle
+// ---------------------------------------------------------------------------
+void runBattleGodBlessingEvent(Player &player)
+{
+    cout << "Blessing of the God of Battle" << endl;
+    cout << "After wandering for a while, you discover a statue of the God of Battle." << endl;
+
+    cout << "1. Pray sincerely" << endl;
+    cout << "2. Reject the gods" << endl;
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 1)
+    {
+        cout << "You kneel and pray for strength to defeat your enemies and avenge the Demon King." << endl;
+        cout << "The God of Battle admires your courage and offers power in exchange for gold." << endl;
+
+        changePlayerGold(player, -20);      // Fixed: was changeGold
+        changePlayerAttack(player, +1);     // Fixed: was changeAttack
+        changePlayerDefense(player, +1);    // Fixed: was changeDefense
+    }
+    else if (choice == 2)
+    {
+        cout << "You believe the gods are only illusions." << endl;
+        cout << "Only your own strength can lead you to revenge." << endl;
+        cout << "Nothing happens." << endl;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Judgment of Good and Evil
+// ---------------------------------------------------------------------------
+void runJudgmentEvent(Player &player) {
+
+    cout << "Judgment of Good and Evil" << endl;
+    cout << "A statue of the God of Good and Evil stands in the middle of the road." << endl;
+    cout << "Every traveler must accept its judgment." << endl;
+
+    int kindness = getPlayerKindness(player);   // Fixed: was [function: getKindness(player)]
+
+    if (kindness >= 5) {
+        cout << "Your kindness deserves a reward!" << endl;
+
+        changePlayerMaxHP(player, +5);      // Fixed: was changeMaxHP
+        changePlayerAttack(player, +1);     // Fixed: was changeAttack
+        changePlayerDefense(player, +1);    // Fixed: was changeDefense
+    }
+    else if (kindness > 0 && kindness < 5) {
+        cout << "Your kindness is worth encouraging!" << endl;
+
+        changePlayerMaxHP(player, +3);      // Fixed: was changeMaxHP
+    }
+    else if (kindness < 0 && kindness > -5) {
+        cout << "This is a warning!" << endl;
+
+        int r = rand() % 2;
+
+        if (r == 0)
+        {
+            cout << "You lost 1 Attack." << endl;
+            changePlayerAttack(player, -1);     // Fixed
+        }
+        else {
+            cout << "You lost 1 Defense." << endl;
+            changePlayerDefense(player, -1);    // Fixed
+        }
+    }
+    else if (kindness <= -5) {
+        cout << "Your sins are unforgivable. Judgment must be carried out!" << endl;
+
+        changePlayerMaxHP(player, -5);      // Fixed
+    }
+    else {
+        cout << "Nothing happens." << endl;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Wandering Merchant
+// ---------------------------------------------------------------------------
+void runMerchantEvent(Player &player, bool isHard) {
+
+    cout << "Wandering Merchant" << endl;
+    cout << "A wandering merchant offers many goods for sale." << endl;
+    cout << "Use your gold to make a choice." << endl;
+
+    cout << "1. Buy a weapon" << endl;
+    cout << "2. Buy an armor" << endl;
+    cout << "3. Rob the merchant" << endl;
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        cout << "Choose your weapon:" << endl;
+        cout << "1. Cheap Weapon (-5 gold, +1 Attack)" << endl;
+        cout << "2. Fine Weapon (-15 gold, +2 Attack)" << endl;
+        cout << "3. Top Weapon (-25 gold, +3 Attack)" << endl;
+
+        int subChoice;
+        cin >> subChoice;
+
+        if (subChoice == 1) {
+            changePlayerGold(player, -5);       // Fixed
+            changePlayerAttack(player, +1);     // Fixed
+            cout << "You bought a cheap weapon." << endl;
+        }
+        else if (subChoice == 2) {
+            changePlayerGold(player, -15);      // Fixed
+            changePlayerAttack(player, +2);     // Fixed
+            cout << "You bought a fine weapon." << endl;
+        }
+        else if (subChoice == 3) {
+            changePlayerGold(player, -25);      // Fixed
+            changePlayerAttack(player, +3);     // Fixed
+            cout << "You bought a top weapon." << endl;
+        }
+    }
+    else if (choice == 2) {
+        cout << "Choose your armor:" << endl;
+        cout << "1. Cheap Armor (-5 gold, +1 Defense)" << endl;
+        cout << "2. Fine Armor (-15 gold, +2 Defense)" << endl;
+        cout << "3. Top Armor (-25 gold, +3 Defense)" << endl;
+
+        int subChoice;
+        cin >> subChoice;
+
+        if (subChoice == 1) {
+            changePlayerGold(player, -5);       // Fixed
+            changePlayerDefense(player, +1);    // Fixed
+            cout << "You bought a cheap armor." << endl;
+        }
+        else if (subChoice == 2) {
+            changePlayerGold(player, -15);      // Fixed
+            changePlayerDefense(player, +2);    // Fixed
+            cout << "You bought a fine armor." << endl;
+        }
+        else if (subChoice == 3) {
+            changePlayerGold(player, -25);      // Fixed
+            changePlayerDefense(player, +3);    // Fixed
+            cout << "You bought a top armor." << endl;
+        }
+    }
+    else if (choice == 3) {
+        cout << "You decide to rob the merchant!" << endl;
+
+        // Fixed: createEnemy takes an int stage; use stage 1 (weakest enemy) as a
+        // stand-in for the merchant until a dedicated merchant enemy ID is defined.
+        Enemy enemy = createEnemy(EnemyType::WanderingMerchant_Forest, isHard);
+        startBattle(player, enemy);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Gambling House
+// ---------------------------------------------------------------------------
+void runGamblingEvent(Player &player) {
+
+    cout << "Gambling House" << endl;
+    cout << "You accidentally enter a gambling house." << endl;
+    cout << "Do you want to take a gamble?" << endl;
+
+    cout << "1. Small bet" << endl;
+    cout << "2. Big bet" << endl;
+    cout << "3. All in" << endl;
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        int r = rand() % 100;
+
+        if (r < 25) {
+            cout << "You lost 1 gold." << endl;
+            changePlayerGold(player, -1);       // Fixed
+        }
+        else if (r < 75) {
+            cout << "Nothing happens." << endl;
+        }
+        else {
+            cout << "You won 1 gold!" << endl;
+            changePlayerGold(player, +1);       // Fixed
+        }
+    }
+    else if (choice == 2) {
+        int r = rand() % 100;
+
+        if (r < 25) {
+            cout << "You lost 5 gold." << endl;
+            changePlayerGold(player, -5);       // Fixed
+        }
+        else if (r < 75) {
+            cout << "Nothing happens." << endl;
+        }
+        else {
+            cout << "You won 5 gold!" << endl;
+            changePlayerGold(player, +5);       // Fixed
+        }
+    }
+    else if (choice == 3) {
+        int r = rand() % 100;
+
+        if (r < 25) {
+            cout << "You lost all your gold." << endl;
+            setPlayerGold(player, 0);           // Fixed: was loseAllGold (no such function)
+        }
+        else if (r < 75) {
+            cout << "Nothing happens." << endl;
+        }
+        else {
+            cout << "You doubled your gold!" << endl;
+            setPlayerGold(player, getPlayerGold(player) * 2); // Fixed: was doubleGold
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Food Cart
+// ---------------------------------------------------------------------------
+void runFoodCartEvent(Player &player) {
+
+    cout << "Food Cart" << endl;
+    cout << "The food cart arrives. Spend your gold to enjoy some perfect meals!" << endl;
+
+    cout << "1. Have a snack (-2 gold, restore 10% HP)" << endl;
+    cout << "2. Have a full meal (-5 gold, restore 30% HP)" << endl;
+    cout << "3. Try magical food (-15 gold)" << endl;
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        cout << "You enjoy a small snack." << endl;
+
+        changePlayerGold(player, -2);                                   // Fixed
+        healPlayer(player, getPlayerMaxHP(player) * 10 / 100);          // Fixed: int arithmetic
+    }
+    else if (choice == 2) {
+        cout << "You enjoy a full meal." << endl;
+
+        changePlayerGold(player, -5);                                   // Fixed
+        healPlayer(player, getPlayerMaxHP(player) * 30 / 100);          // Fixed
+    }
+    else if (choice == 3) {
+        cout << "You try the magical food..." << endl;
+
+        changePlayerGold(player, -15);                                  // Fixed
+
+        int r = rand() % 2;
+
+        if (r == 0) {
+            cout << "You lost some Attack but gained great Defense!" << endl;
+
+            int loss = rand() % 4 + 1;  // 1~4
+
+            changePlayerAttack(player, -loss);          // Fixed
+            changePlayerDefense(player, 2 * loss);      // Fixed
+        }
+        else {
+            cout << "You lost some Defense but gained great Attack!" << endl;
+
+            int loss = rand() % 4 + 1;
+
+            changePlayerDefense(player, -loss);         // Fixed
+            changePlayerAttack(player, 2 * loss);       // Fixed
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Blessing of the God of Revenge
+// ---------------------------------------------------------------------------
+void runRevengeGodBlessingEvent(Player &player) {
+
+    cout << "Blessing of the God of Revenge" << endl;
+    cout << "Guided by the God of Revenge, you arrive before the statue." << endl;
+    cout << "Your hatred toward the Demon King pleases the god." << endl;
+
+    cout << "1. Rational revenge" << endl;
+    cout << "2. Aggressive revenge" << endl;
+    cout << "3. Mad revenge" << endl;
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        cout << "The God of Revenge is disappointed, but still grants you power." << endl;
+
+        changePlayerAttack(player, +1);     // Fixed
+    }
+    else if (choice == 2) {
+        cout << "The god approves your determination and demands a price." << endl;
+
+        damagePlayer(player, 5);            // Fixed
+        changePlayerAttack(player, +3);     // Fixed
+    }
+    else if (choice == 3) {
+        cout << "The God of Revenge is finally satisfied." << endl;
+        cout << "You give up everything for ultimate power." << endl;
+
+        leavePlayerAtOneHP(player);                                     // Fixed: was setHPToOne
+        int currentAtk = getPlayerAttack(player);
+        changePlayerAttack(player, -2);                                 // Fixed
+        changePlayerAttack(player, getPlayerAttack(player));            // Fixed: was doubleAttack
+        setPlayerAttack(player, getPlayerAttack(player) * 2);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Master Hermit
+// ---------------------------------------------------------------------------
+void runMasterHermitEvent(Player &player) {
+
+    cout << "Master Hermit" << endl;
+    cout << "You encounter a reclusive master and seek guidance in martial arts." << endl;
+
+    cout << "1. Follow the balanced path" << endl;
+    cout << "2. Take an unconventional approach" << endl;
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        cout << "The master teaches you a balanced style." << endl;
+
+        changePlayerAttack(player, +1);     // Fixed
+        changePlayerDefense(player, +1);    // Fixed
+    }
+    else if (choice == 2) {
+        cout << "The master reshapes your abilities in an unpredictable way..." << endl;
+
+        int hp  = getPlayerHP(player);          // Fixed: was getHP
+        int atk = getPlayerAttack(player);      // Fixed: was getAttack
+        int def = getPlayerDefense(player);     // Fixed: was getDefense
+
+        int stats[3] = {hp, atk, def};
+
+        for (int i = 0; i < 3; i++) {
+            int j = rand() % 3;
+            int temp = stats[i];
+            stats[i] = stats[j];
+            stats[j] = temp;
+        }
+
+        setPlayerHP(player, stats[0]);          // Fixed: was setHP
+        setPlayerAttack(player, stats[1]);      // Fixed: was setAttack
+        setPlayerDefense(player, stats[2]);     // Fixed: was setDefense
+
+        cout << "Your stats have been reshuffled!" << endl;
+    }
+    else {
+        cout << "Invalid choice. Nothing happens." << endl;
+    }
+}
+```
+
+`event/common.h`:
+
+```h
+#ifndef COMMON_H
+#define COMMON_H
+ 
+#include "../player/player.h"   // Fixed: Player type must be included before it is used
+ 
+void runBattleGodBlessingEvent(Player &player);
+void runJudgmentEvent(Player &player);
+void runMerchantEvent(Player &player, bool isHard);
+void runGamblingEvent(Player &player);
+void runFoodCartEvent(Player &player);
+void runRevengeGodBlessingEvent(Player &player);
+void runMasterHermitEvent(Player &player);
+ 
+#endif
+```
+
+`event/event.h`:
+
+```h
+#ifndef EVENT_H
+#define EVENT_H
+
+#include "../player/player.h"
+
+void runForestEvent(int eventId, Player &p, bool isHard);
+void runMountainEvent(int eventId, Player &p, bool isHard);
+void runAbyssEvent(int eventId, Player &p, bool isHard);
+
+#endif
+
+```
+
+`event/forest.cpp`:
+
+```cpp
+#include <iostream>
+#include <cstdlib>
+#include "../player/player.h"
+#include "../enemy/enemy.h"
+#include "common.h"
+// Forward-declare startBattle until Combat.h is finalised.
+bool startBattle(Player &player, Enemy &enemy);
+
+using namespace std;
+
+void runForestEvent(int eventId, Player &player, bool isHard) {
+
+    // event 1
+    if (eventId == 1) {
+
+        cout << "Goblin Robbery!" << endl;
+        cout << "'Stop right there!'" << endl;
+        cout << "Two small goblins jump out from behind a tree. "
+             << "They are only half your height, but they threaten you with knives." << endl;
+
+        cout << "1. Give them your gold" << endl;
+        cout << "2. Fight back" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "You hand over half of your gold. "
+                 << "The goblins leave happily and even call you a good person." << endl;
+
+            changePlayerGold(player, -5);           // Fixed: was changeGold
+            changePlayerKindness(player, +1);       // Fixed: was changeKindness
+        }
+        else if (choice == 2) {
+            cout << "You refuse to give up your gold and prepare to fight!" << endl;
+
+            Enemy enemy = createEnemy(EnemyType::Goblin, isHard);           // Fixed: was createEnemy(1) - no such function
+            startBattle(player, enemy);             // Fixed: was startBattle(player, enemy) - OK
+        }
+    }
+
+    // event 2
+    else if (eventId == 2) {
+        runBattleGodBlessingEvent(player);
+    }
+
+    // event 3
+    else if (eventId == 3) {
+
+        cout << "A Peaceful Village" << endl;
+        cout << "After a long journey, you discover a peaceful village hidden in the forest." << endl;
+        cout << "You may take a rest... or do something else." << endl;
+
+        cout << "1. Rest" << endl;
+        cout << "2. Steal from the blacksmith" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "You decide to take a full day of rest." << endl;
+
+            healPlayer(player, getPlayerMaxHP(player) * 30 / 100);  // Fixed: int arithmetic
+        }
+        else if (choice == 2) {
+            cout << "You sneak into the blacksmith shop and steal a piece of equipment." << endl;
+
+            changePlayerKindness(player, -1);       // Fixed
+
+            int r = rand() % 2;
+
+            if (r == 0) {
+                cout << "You gained +1 Attack." << endl;
+                changePlayerAttack(player, +1);     // Fixed
+            } else {
+                cout << "You gained +1 Defense." << endl;
+                changePlayerDefense(player, +1);    // Fixed
+            }
+        }
+    }
+
+    // event 4
+    else if (eventId == 4) {
+
+        cout << "Ruined Village" << endl;
+        cout << "After a long journey, you find a ruined village hidden in the forest." << endl;
+        cout << "Only the elderly, women, and children are left." << endl;
+
+        cout << "1. Rob them" << endl;
+        cout << "2. Help them" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "There are no strong men left in the village." << endl;
+            cout << "You rob the helpless villagers and take their last coins." << endl;
+            cout << "All you receive in return is their curse." << endl;
+
+            changePlayerKindness(player, -3);       // Fixed
+            changePlayerGold(player, +5);           // Fixed
+        }
+        else if (choice == 2) {
+            cout << "You feel sorry for them and give them some of your own gold." << endl;
+            cout << "You hope they can survive." << endl;
+
+            changePlayerKindness(player, +2);       // Fixed
+            changePlayerGold(player, -5);           // Fixed
+        }
+    }
+
+    // event 5
+    else if (eventId == 5) {
+        runJudgmentEvent(player);
+    }
+
+    // event 6
+    else if (eventId == 6) {
+        runMerchantEvent(player,isHard);
+    }
+
+    // event 7
+    else if (eventId == 7) {
+
+        cout << "Adventurer's Remains" << endl;
+        cout << "You discover the crushed remains of an adventurer." << endl;
+        cout << "There may still be something useful among the remains." << endl;
+
+        cout << "1. Search the remains" << endl;
+        cout << "2. Bury the body" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            int r1 = rand() % 4;
+
+            if (r1 == 0) {
+                cout << "A lot of gold!" << endl;
+                changePlayerGold(player, +5);       // Fixed
+            }
+            else if (r1 == 1) {
+                cout << "Some gold!" << endl;
+                changePlayerGold(player, +3);       // Fixed
+            }
+            else if (r1 == 2) {
+                cout << "A little gold!" << endl;
+                changePlayerGold(player, +1);       // Fixed
+            }
+            else {
+                cout << "You found nothing." << endl;
+            }
+
+            int r2 = rand() % 2;
+
+            if (r2 == 0) {
+                cout << "The rotten corpse carries a disease. You are infected!" << endl;
+                changePlayerMaxHP(player, -1);      // Fixed
+            }
+            else {
+                cout << "Nothing else happens." << endl;
+            }
+        }
+        else if (choice == 2) {
+            cout << "You spend some time digging a deep hole and bury the remains." << endl;
+
+            changePlayerKindness(player, +1);       // Fixed
+        }
+    }
+
+    // event 8
+    else if (eventId == 8) {
+
+        cout << "Forest Tiger" << endl;
+        cout << "You hear that a fierce tiger lives deep in the forest." << endl;
+        cout << "Many adventurers and villagers nearby have already died to it." << endl;
+
+        cout << "1. Eliminate the beast" << endl;
+        cout << "2. Avoid it" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "You decide to hunt the tiger." << endl;
+
+            Enemy enemy = createEnemy(EnemyType::Tiger, isHard);            // Fixed: was createEnemy(tiger_id)
+            startBattle(player, enemy);             // Fixed
+        }
+        else if (choice == 2) {
+            cout << "Only a fool would challenge the king of the forest. You choose to go around it." << endl;
+
+            int r = rand() % 100;
+
+            if (r < 25) {
+                cout << "You safely avoid the tiger." << endl;
+            }
+            else {
+                cout << "The longer path is rough and dangerous." << endl;
+                cout << "You fall badly and even tear your money bag on the bushes." << endl;
+
+                damagePlayer(player, 3);            // Fixed
+                changePlayerGold(player, -3);       // Fixed
+            }
+        }
+    }
+
+    // event 9
+    else if (eventId == 9) {
+
+        cout << "Senior Adventurer" << endl;
+        cout << "You meet a senior adventurer and decide to learn from them." << endl;
+
+        cout << "1. Balance of attack and defense" << endl;
+        cout << "2. Offense is the best defense" << endl;
+        cout << "3. Defense is the best offense" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "You learn a balanced fighting style." << endl;
+
+            changePlayerAttack(player, +1);         // Fixed
+            changePlayerDefense(player, +1);        // Fixed
+        }
+        else if (choice == 2) {
+            cout << "You focus entirely on offense." << endl;
+
+            changePlayerAttack(player, +3);         // Fixed
+            changePlayerDefense(player, -1);        // Fixed
+        }
+        else if (choice == 3) {
+            cout << "You focus entirely on defense." << endl;
+
+            changePlayerDefense(player, +3);        // Fixed
+            changePlayerAttack(player, -1);         // Fixed
+        }
+    }
+
+    // event 10
+    else if (eventId == 10) {
+
+        cout << "Backstab!" << endl;
+        cout << "The forest is pitch dark at night." << endl;
+        cout << "Before you can react, someone stabs you from behind!" << endl;
+
+        damagePlayer(player, 2);                    // Fixed
+
+        cout << "You are hurt and immediately enter battle." << endl;
+
+        // Fixed: thief_id undefined; using createGoblin as stand-in
+        Enemy enemy = createEnemy(EnemyType::Goblin,isHard);
+        startBattle(player, enemy);                 // Fixed
+    }
+
+    // event 11
+    else if (eventId == 11) {
+        runGamblingEvent(player);
+    }
+
+    // event 12
+    else if (eventId == 12) {
+        cout << "Hunting" << endl;
+        cout << "An old hunter living in the forest invites you to go hunting with him." << endl;
+        cout << "1. Small prey" << endl;
+        cout << "2. Medium prey" << endl;
+        cout << "3. Large prey" << endl;
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "You decide to hunt small prey." << endl;
+
+            // Fixed: rabbit_id undefined; using createGoblin as lightest stand-in
+            Enemy enemy = createEnemy(EnemyType::Rabbit, isHard);
+            startBattle(player, enemy);             // Fixed
+        }
+        else if (choice == 2) {
+            cout << "You decide to hunt medium prey." << endl;
+
+            // Fixed: was `enemy = createEnemy(dog_id)` — enemy was undeclared in this branch
+            Enemy enemy = createEnemy(EnemyType::Hellhound, isHard);
+            startBattle(player, enemy);             // Fixed
+        }
+        else if (choice == 3) {
+            cout << "You decide to hunt large prey." << endl;
+
+            // Fixed: bear_id undefined; using createTiger as heaviest available stand-in
+            Enemy enemy = createEnemy(EnemyType::BrownBear, isHard);
+            startBattle(player, enemy);             // Fixed
+        }
+    }
+
+    // event 13
+    else if (eventId == 13) {
+
+        cout << "Magic Spring" << endl;
+        cout << "You discover a small green spring in the forest." << endl;
+        cout << "It seems to have magical power." << endl;
+
+        cout << "1. Clean your wounds" << endl;
+        cout << "2. Drink it" << endl;
+        cout << "3. Collect and sell it" << endl;
+        cout << "4. Purify your sins" << endl;
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "You clean your wounds and recover some health." << endl;
+
+            healPlayer(player, 5);                  // Fixed
+        }
+        else if (choice == 2) {
+            cout << "You drink the water and feel stronger." << endl;
+
+            changePlayerAttack(player, +1);         // Fixed
+            changePlayerDefense(player, +1);        // Fixed
+            changePlayerMaxHP(player, +1);          // Fixed
+        }
+        else if (choice == 3) {
+            cout << "You collect the water and sell it for gold." << endl;
+
+            changePlayerGold(player, +10);          // Fixed
+        }
+        else if (choice == 4) {
+            cout << "You try to purify your sins." << endl;
+
+            int kindness = getPlayerKindness(player);   // Fixed
+
+            if (kindness < 0) {
+                cout << "Your sins are cleansed." << endl;
+
+                setPlayerKindness(player, 0);       // Fixed: was setKindness
+            } else {
+                cout << "You have no sins to cleanse." << endl;
+            }
+        }
+    }
+
+    // event 14
+    else if (eventId == 14) {
+
+        cout << "Guardian of the Forest" << endl;
+        cout << "To leave the forest and move forward," << endl;
+        cout << "you must defeat the guardian of the forest — the Treant." << endl;
+
+        cout << "Prepare for battle!" << endl;
+
+        // Fixed: forest_boss_id undefined; use createBoss(1) = Dryad (forest boss)
+        Enemy enemy = createBoss(1,isHard);
+        startBattle(player, enemy);                 // Fixed
+    }
+
+    // event 15
+    else if (eventId == 15) {
+        runFoodCartEvent(player);
+    }
+
+    // event 16
+    else if (eventId == 16) {
+        runRevengeGodBlessingEvent(player);
+    }
+}
+```
+
+`event/mountain.cpp`:
+
+```cpp
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include "../player/player.h"
+#include "../enemy/enemy.h"
+#include "../event/common.h"
+
+using namespace std;
+bool startBattle(Player &player, Enemy &enemy);
+
+void runMountainEvent(int eventId, Player &player, bool isHard) {
+    if (eventId == 1) {
+        // Execute external function for Event 1
+        runBattleGodBlessingEvent(player);
+    }
+    else if (eventId == 2) {
+        // Execute external function for Event 2
+        runJudgmentEvent(player);
+    }
+    else if (eventId == 3) {
+        // Execute external function for Event 3
+        runMerchantEvent(player,isHard);
+    }
+    else if (eventId == 4) {
+       // Execute external function for Event 4
+       runGamblingEvent(player);
+    }
+    else if (eventId == 5) {
+       // Execute external function for Event 5
+       runFoodCartEvent(player);
+    }
+    else if (eventId == 6) {
+       // Execute external function for Event 6
+       runRevengeGodBlessingEvent(player);
+    }  
+    else if (eventId == 7) {
+
+        // Display event title
+        cout << "Landslide!" << endl;
+
+        // Display player choices
+        cout << "1. Drop everything and run for your life" << endl;
+        cout << "2. Leave it to fate" << endl;
+
+        // Variable to hold the user's input
+        int choice;
+        
+        // Read input from the console
+        cin >> choice;
+
+        // Process Choice 1: The coward's route
+        if (choice == 1) {
+            
+            // Output narrative text
+            cout << "You throw away your equipment and escape in panic." << endl;
+
+            // Apply severe stat penalties
+            changePlayerAttack(player, -3);   // Decrease attack power
+            changePlayerDefense(player, -3);  // Decrease defense power
+            changePlayerGold(player, -10);    // Decrease wallet balance
+        }
+        // Process Choice 2: The brave/reckless route
+        else if (choice == 2) {
+            
+            // Output narrative text
+            cout << "You decide to leave it to fate." << endl;
+
+            // Calculate random damage (RNG from 1 to 10)
+            int damage = rand() % 10 + 1;
+            
+            // Apply damage to the player's health pool
+            damagePlayer(player, damage);   
+
+            // Inform the player of the outcome
+            cout << "You lost " << damage << " HP." << endl;
+            
+        }
+        // Process Invalid Input
+        else {
+            // Failsafe for incorrect console input
+            cout << "Invalid choice. Nothing happens." << endl;
+        }
+    }
+    else if (eventId == 8) {
+
+        // Display narrative text for the ambush
+        cout << "Griffon Attack!" << endl;
+        cout << "A griffon suddenly swoops down from the sky!" << endl;
+
+        // Instantiate the Griffin enemy
+        Enemy enemy = createEnemy(EnemyType::Griffon, isHard);   
+        
+        // Trigger the combat sequence (Execution jumps to Combat.cpp)
+        startBattle(player, enemy);              
+    }
+    else if (eventId == 9) {
+
+        // Display narrative text and lore
+        cout << "Blessing of the God of the Mountain" << endl;
+        cout << "You arrive at the statue of the God of the Mountain." << endl;
+        cout << "Perhaps you need the god's blessing to overcome the hardships ahead." << endl;
+        cout << "Like the God of Battle, the God of the Mountain can also be 'persuaded' with gold." << endl;
+
+        // Display player choices
+        cout << "1. Kneel and pray sincerely" << endl;
+        cout << "2. Reject the gods" << endl;
+
+        // Variable to hold the user's input
+        int choice;
+        
+        // Read input from the console
+        cin >> choice;
+
+        // Process Choice 1: Submission and payment
+        if (choice == 1) {
+            
+            // Output narrative text
+            cout << "You kneel before the statue and offer your gold." << endl;
+
+            // Apply transaction
+            changePlayerGold(player, -20);      // Deduct funds
+            changePlayerDefense(player, +3);    // Grant defensive blessing
+            
+        }
+        // Process Choice 2: Defiance and curse
+        else if (choice == 2) {
+            
+            // Output narrative text
+            cout << "You believe gods are only illusions." << endl;
+            cout << "Unlike the God of Battle, the God of the Mountain is not merciful." << endl;
+            cout << "You are cursed for your arrogance." << endl;
+
+            // Apply curse penalty
+            changePlayerAttack(player, -1);     // Reduce offensive power
+            
+        }
+        // Process Invalid Input
+        else {
+            // Failsafe for incorrect console input
+            cout << "Invalid choice. Nothing happens." << endl;
+        }
+    }
+    else if (eventId == 10){
+        // Execute external function for Event 10
+        runMasterHermitEvent(player);
+    }
+    else if (eventId == 11) {
+
+        // Display narrative text
+        cout << "Bandit Invasion" << endl;
+        cout << "A group of bandits are terrorizing this area." << endl;
+        cout << "Do you have the courage to stop them?" << endl;
+
+        // Display player choices
+        cout << "1. Stay cowardly" << endl;
+        cout << "2. Fight for justice" << endl;
+
+        // Variable to hold the user's input
+        int choice;
+        
+        // Read input from the console
+        cin >> choice;
+
+        // Process Choice 1: Avoid combat, lose morality
+        if (choice == 1) {
+            
+            // Output narrative text
+            cout << "You decide not to get involved." << endl;
+
+            // Apply morality penalty
+            changePlayerKindness(player, -3);   
+            
+        }
+        // Process Choice 2: Engage in combat
+        else if (choice == 2) {
+            
+            // Output narrative text
+            cout << "You decide to stand up against the bandits!" << endl;
+
+            // Instantiate Bandit enemy
+            Enemy enemy = createEnemy(EnemyType::Bandit, isHard);   
+            
+            // Trigger combat sequence
+            startBattle(player, enemy);             
+            
+        }
+        // Process Invalid Input
+        else {
+            // Failsafe for incorrect console input
+            cout << "Invalid choice. Nothing happens." << endl;
+        }
+    }
+    else if (eventId == 12) {
+
+        // Display narrative text
+        cout << "Fire Spirit" << endl;
+        cout << "This is a volcano. The burning lava has given birth to a Fire Spirit." << endl;
+
+        // Display player choices
+        cout << "1. Hunt the Fire Spirit" << endl;
+        cout << "2. Trade fairly" << endl;
+
+        // Variable to hold the user's input
+        int choice;
+        
+        // Read input from the console
+        cin >> choice;
+
+        // Process Choice 1: Aggressive path
+        if (choice == 1) {
+            
+            // Output narrative text
+            cout << "You attack the Fire Spirit." << endl;
+
+            // Apply morality penalty for unprovoked attack
+            changePlayerKindness(player, -1);   
+
+            // Instantiate Fire Spirit enemy
+            Enemy enemy = createEnemy(EnemyType::FireSprite, isHard);  
+            
+            // Trigger combat sequence
+            startBattle(player, enemy);                 
+            
+        }
+        // Process Choice 2: Peaceful path
+        else if (choice == 2) {
+            
+            // Output narrative text
+            cout << "You trade gold for the spirit's flame." << endl;
+
+            // Apply transaction and stat boosts
+            changePlayerGold(player, -10);     // Deduct funds
+            changePlayerKindness(player, +1);  // Increase morality
+            changePlayerAttack(player, +1);    // Increase offensive power
+            
+        }
+        // Process Invalid Input
+        else {
+            // Failsafe for incorrect console input
+            cout << "Invalid choice. Nothing happens." << endl;
+        }
+    }
+    else if (eventId == 13) {
+
+        // Display narrative text
+        cout << "A Dragon Egg!" << endl;
+        cout << "At the mountain peak, you discover a sleeping dragon and a dragon egg." << endl;
+
+        // Display player choices
+        cout << "1. Walk away quietly" << endl;
+        cout << "2. Steal the egg" << endl;
+
+        // Variable to hold the user's input
+        int choice;
+        
+        // Read input from the console
+        cin >> choice;
+
+        // Process Choice 1: The safe route
+        if (choice == 1) {
+            
+            // Output narrative text
+            cout << "Even though the egg is priceless, you dare not wake the dragon." << endl;
+            cout << "Nothing happens." << endl;
+            
+        }
+        // Process Choice 2: The greedy route
+        else if (choice == 2) {
+            
+            // Output narrative text
+            cout << "You attempt to steal the dragon egg..." << endl;
+
+            // Apply morality penalty for theft
+            changePlayerKindness(player, -1);   
+
+            // Generate a random number between 0 and 99
+            int r = rand() % 100;
+
+            // Determine outcome: 25% chance of success
+            if (r < 25) {
+                
+                // Success output
+                cout << "You successfully stole the egg without waking the dragon!" << endl;
+                
+                // Massive gold reward
+                changePlayerGold(player, +50);  
+                
+            }
+            // Determine outcome: 75% chance of failure
+            else {
+                
+                // Failure output
+                cout << "You wake the dragon. You must face its wrath!" << endl;
+
+                // Instantiate Dragon Boss enemy
+                Enemy enemy = createEnemy(EnemyType::Dragon, isHard);   
+                
+                // Trigger deadly combat sequence
+                startBattle(player, enemy);             
+                
+            }
+        }
+        // Process Invalid Input
+        else {
+            // Failsafe for incorrect console input
+            cout << "Invalid choice. Nothing happens." << endl;
+        }
+    }
+    else if (eventId == 14) {
+
+        // Display epic narrative text for the boss encounter
+        cout << "=====================================" << endl;
+        cout << "             STONE GIANT             " << endl;
+        cout << "=====================================" << endl;
+        cout << "To leave the mountains and descend into the abyss," << endl;
+        cout << "you must defeat the guardian of the Demon King — the Stone Giant." << endl;
+        cout << "Prepare for battle!" << endl;
+        cout << "=====================================" << endl;
+
+        // Instantiate the Chapter Boss
+        Enemy enemy = createBoss(2,isHard);   
+        
+        // Trigger the boss battle and capture the boolean result (Win/Loss)
+        bool win = startBattle(player, enemy);       
+
+        // Evaluate the result of the battle
+        if (win) {
+            
+            // Player won the boss fight
+            cout << "=====================================" << endl;
+            cout << "You defeated the Stone Giant!" << endl;
+            cout << "The path to the abyss is now open." << endl;
+            cout << "=====================================" << endl;
+            
+            // NOTE FOR INTEGRATION: 
+            // The GameManager should detect this state and update currentChapter.
+            
+        } else {
+            
+            // Player lost the boss fight
+            cout << "=====================================" << endl;
+            cout << "You were defeated by the Stone Giant..." << endl;
+            cout << "Your journey ends here in the freezing mountains." << endl;
+            cout << "=====================================" << endl;
+            
+            // NOTE FOR INTEGRATION:
+            // The GameManager will detect player HP <= 0 and trigger the Game Over sequence.
+            
+        }
+    }
+    else {
+        runMerchantEvent(player,isHard); 
+    }
+}
+```
+
+`player/player.cpp`:
+
+```cpp
+#include "player.h"
+
+static int clampNonNegative(int value) {
+    return (value < 0) ? 0 : value;
+}
+
+static int clampAtLeastOne(int value) {
+    return (value < 1) ? 1 : value;
+}
+
+static void clampPlayerHP(Player &p) {
+    if (p.hp < 0) p.hp = 0;
+    if (p.hp > p.maxHp) p.hp = p.maxHp;
+}
+
+Player createPlayer(int difficulty) {
+    Player p;
+
+    if (difficulty == HARD_MODE) {
+        p.maxHp = 20;
+        p.hp = 20;
+        p.attack = 7;
+        p.defense = 2;
+        p.gold = 10;
+        p.kindness = 0;
+    } else {
+        p.maxHp = 24;
+        p.hp = 24;
+        p.attack = 8;
+        p.defense = 3;
+        p.gold = 10;
+        p.kindness = 0;
+    }
+
+    p.savedHp = p.hp;
+    p.savedAttack = p.attack;
+    p.savedDefense = p.defense;
+    p.combatStateSaved = false;
+
+    return p;
+}
+
+int getPlayerHP(const Player &p) {
+    return p.hp;
+}
+
+int getPlayerMaxHP(const Player &p) {
+    return p.maxHp;
+}
+
+int getPlayerAttack(const Player &p) {
+    return p.attack;
+}
+
+int getPlayerDefense(const Player &p) {
+    return p.defense;
+}
+
+int getPlayerGold(const Player &p) {
+    return p.gold;
+}
+
+int getPlayerKindness(const Player &p) {
+    return p.kindness;
+}
+
+void setPlayerHP(Player &p, int hp) {
+    p.hp = hp;
+    clampPlayerHP(p);
+}
+
+void setPlayerMaxHP(Player &p, int maxHp) {
+    p.maxHp = clampAtLeastOne(maxHp);
+    clampPlayerHP(p);
+}
+
+void setPlayerAttack(Player &p, int attack) {
+    p.attack = clampNonNegative(attack);
+}
+
+void setPlayerDefense(Player &p, int defense) {
+    p.defense = clampNonNegative(defense);
+}
+
+void setPlayerGold(Player &p, int gold) {
+    p.gold = clampNonNegative(gold);
+}
+
+void setPlayerKindness(Player &p, int kindness) {
+    p.kindness = kindness;
+}
+
+void damagePlayer(Player &p, int dmg) {
+    if (dmg <= 0) return;
+    p.hp -= dmg;
+    clampPlayerHP(p);
+}
+
+void healPlayer(Player &p, int amount) {
+    if (amount <= 0) return;
+    p.hp += amount;
+    clampPlayerHP(p);
+}
+
+void healPlayerPercent(Player &p, int percent) {
+    if (percent <= 0) return;
+    int amount = p.maxHp * percent / 100;
+    healPlayer(p, amount);
+}
+
+void fullHealPlayer(Player &p) {
+    p.hp = p.maxHp;
+}
+
+void loseHpByMaxHpPercent(Player &p, int percent) {
+    if (percent <= 0) return;
+    int amount = p.maxHp * percent / 100;
+    damagePlayer(p, amount);
+}
+
+void changePlayerMaxHP(Player &p, int amount) {
+    p.maxHp = clampAtLeastOne(p.maxHp + amount);
+    clampPlayerHP(p);
+}
+
+void changePlayerAttack(Player &p, int amount) {
+    p.attack = clampNonNegative(p.attack + amount);
+}
+
+void changePlayerDefense(Player &p, int amount) {
+    p.defense = clampNonNegative(p.defense + amount);
+}
+
+void changePlayerGold(Player &p, int amount) {
+    p.gold = clampNonNegative(p.gold + amount);
+}
+
+void changePlayerKindness(Player &p, int amount) {
+    p.kindness += amount;
+}
+
+bool isPlayerAlive(const Player &p) {
+    return p.hp > 0;
+}
+
+void leavePlayerAtOneHP(Player &p) {
+    p.hp = 1;
+    clampPlayerHP(p);
+}
+
+void resetKindnessToZero(Player &p) {
+    p.kindness = 0;
+}
+
+int getMissingHP(const Player &p) {
+    return p.maxHp - p.hp;
+}
+
+void convertMissingHpToAttack(Player &p) {
+    int missing = getMissingHP(p);
+    if (missing > 0) {
+        p.attack += missing;
+    }
+}
+
+void upgradePlayer(Player &p, int choice, int amount) {
+    if (amount <= 0) return;
+
+    if (choice == UPGRADE_ATTACK) {
+        changePlayerAttack(p, amount);
+    } else if (choice == UPGRADE_DEFENSE) {
+        changePlayerDefense(p, amount);
+    } else if (choice == UPGRADE_MAX_HP) {
+        changePlayerMaxHP(p, amount);
+        fullHealPlayer(p);
+    }
+}
+
+void saveCombatState(Player &p) {
+    p.savedHp = p.hp;
+    p.savedAttack = p.attack;
+    p.savedDefense = p.defense;
+    p.combatStateSaved = true;
+}
+
+void setCombatState(Player &p, int hp, int attack, int defense) {
+    setPlayerHP(p, hp);
+    setPlayerAttack(p, attack);
+    setPlayerDefense(p, defense);
+}
+
+void restoreCombatState(Player &p) {
+    if (!p.combatStateSaved) return;
+
+    p.hp = p.savedHp;
+    p.attack = p.savedAttack;
+    p.defense = p.savedDefense;
+
+    clampPlayerHP(p);
+    p.attack = clampNonNegative(p.attack);
+    p.defense = clampNonNegative(p.defense);
+
+    p.combatStateSaved = false;
+}
+
+```
+
+`player/player.h`:
+
+```h
+#ifndef PLAYER_H
+#define PLAYER_H
+
+struct Player {
+    int hp;
+    int maxHp;
+    int attack;
+    int defense;
+    int gold;
+    int kindness;
+
+    int savedHp;
+    int savedAttack;
+    int savedDefense;
+    bool combatStateSaved;
+};
+
+const int EASY_MODE = 1;
+const int HARD_MODE = 2;
+
+const int UPGRADE_ATTACK = 1;
+const int UPGRADE_DEFENSE = 2;
+const int UPGRADE_MAX_HP = 3;
+
+// Create player with easy or hard initial stats.
+Player createPlayer(int difficulty);
+
+// Basic getters.
+int getPlayerHP(const Player &p);
+int getPlayerMaxHP(const Player &p);
+int getPlayerAttack(const Player &p);
+int getPlayerDefense(const Player &p);
+int getPlayerGold(const Player &p);
+int getPlayerKindness(const Player &p);
+
+// Basic setters.
+void setPlayerHP(Player &p, int hp);
+void setPlayerMaxHP(Player &p, int maxHp);
+void setPlayerAttack(Player &p, int attack);
+void setPlayerDefense(Player &p, int defense);
+void setPlayerGold(Player &p, int gold);
+void setPlayerKindness(Player &p, int kindness);
+
+// HP-related changes.
+void damagePlayer(Player &p, int dmg);
+void healPlayer(Player &p, int amount);
+void healPlayerPercent(Player &p, int percent);
+void fullHealPlayer(Player &p);
+void loseHpByMaxHpPercent(Player &p, int percent);
+
+// Stat changes.
+void changePlayerMaxHP(Player &p, int amount);
+void changePlayerAttack(Player &p, int amount);
+void changePlayerDefense(Player &p, int amount);
+void changePlayerGold(Player &p, int amount);
+void changePlayerKindness(Player &p, int amount);
+
+// Status checks and special effects.
+bool isPlayerAlive(const Player &p);
+void leavePlayerAtOneHP(Player &p);
+void resetKindnessToZero(Player &p);
+int getMissingHP(const Player &p);
+void convertMissingHpToAttack(Player &p);
+
+// Apply one post-battle upgrade.
+void upgradePlayer(Player &p, int choice, int amount);
+
+// Save and restore temporary combat state.
+void saveCombatState(Player &p);
+void setCombatState(Player &p, int hp, int attack, int defense);
+void restoreCombatState(Player &p);
+
+#endif
+
+```
