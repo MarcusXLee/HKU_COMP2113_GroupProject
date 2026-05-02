@@ -23,14 +23,14 @@ bool startBattle(Player &player, Enemy &enemy, UIManager &ui)
         if (choice == 2) { // Flee
             int penalty = player.maxHp / 5;
             player.hp -= penalty;
-            cout << "You fled and lost " << penalty << " HP" << endl;
+            cout << "You fled and lost " << penalty << " HP." << endl;
             return false; 
         }
 
         // Attack
         int dmgToEnemy = std::max(1, player.attack - enemy.def);
         enemy.hp -= dmgToEnemy;
-        std::cout << "You caused " << dmgToEnemy << " points of damage to" << enemy.name << std::endl;
+        std::cout << "You caused " << dmgToEnemy << " points of damage to " << enemy.name << "." << std::endl;
 
         if (enemy.hp <= 0) {
             // Dryad's revival
@@ -38,17 +38,17 @@ bool startBattle(Player &player, Enemy &enemy, UIManager &ui)
             {
                 enemy.extraLives--;
                 enemy.hp = enemy.maxHp;
-                cout << enemy.name << "revived!" << endl;
+                cout << enemy.name << " revived!" << endl;
                 continue;
             }
-            cout << "You defeated" << enemy.name << "!" << endl;
+            cout << "You defeated " << enemy.name << "!" << endl;
             return true;
         }
 
         // Enemy Attack
         int dmgToPlayer = max(1, enemy.atk - player.defense);
         player.hp -= dmgToPlayer;
-        cout << enemy.name << " caused" << dmgToPlayer << " points of harm to you" << endl;
+        cout << enemy.name << " caused " << dmgToPlayer << " points of harm to you." << endl;
     }
     return player.hp > 0;
 }

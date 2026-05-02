@@ -67,18 +67,22 @@ void GameManager::initGame() {
 // The core Game Loop
 void GameManager::gameLoop() {
     while (!isGameOver && currentChapter != Chapter::COMPLETED) {
+        
+        // Autosave added!
+        fileIO.saveGame(player, static_cast<int>(currentChapter), isHardMode);
+        uiManager.printMessage("Game Auto-Saved! You can safely quit now.");
+        cout << "=============================================" << endl;
         processChapter();
         
-        // Check death state after chapter finishes
+        // Is Alive or not
         if (getPlayerHP(player) <= 0) {
             isGameOver = true;
             uiManager.showGameOver();
         } else {
-            advanceChapter();
+            advanceChapter(); // Next Chapter
         }
     }
-    
-    // Win condition
+    // Victory
     if (!isGameOver && currentChapter == Chapter::COMPLETED) {
         uiManager.showVictory();
     }
@@ -149,5 +153,4 @@ void GameManager::advanceChapter() {
         default: 
             break;
     }
-    fileIO.saveGame(player, static_cast<int>(currentChapter), isHardMode);
 }
