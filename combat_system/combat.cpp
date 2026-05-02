@@ -24,6 +24,9 @@ bool startBattle(Player &player, Enemy &enemy, UIManager &ui)
             int penalty = player.maxHp / 5;
             player.hp -= penalty;
             cout << "You fled and lost " << penalty << " HP." << endl;
+            //Reflecting current HP
+            cout << "[!] Current HP: " << player.hp << " / " << player.maxHp << endl;
+            cout << endl;
             return false; 
         }
 
@@ -42,6 +45,15 @@ bool startBattle(Player &player, Enemy &enemy, UIManager &ui)
                 continue;
             }
             cout << "You defeated " << enemy.name << "!" << endl;
+            cout << endl;
+            //Dashboard for post-battle status
+            cout << "=== POST-BATTLE STATUS ===" << endl;
+            cout << " HP      : " << player.hp << " / " << player.maxHp << endl;
+            cout << " Attack  : " << player.attack << endl;
+            cout << " Defense : " << player.defense << endl;
+            cout << " Gold    : " << player.gold << endl;
+            cout << "==========================" << endl;
+            cout << endl;
             return true;
         }
 

@@ -1,0 +1,9 @@
+
+========================================
+[SYSTEM] Game Session Started
+========================================
+[LOG] Game saved. Chapter=0 HP=24
+[LOG] Starting chapter: Forest | HP=24 ATK=8 DEF=3 Gold=10
+[LOG] Boss battle ended. Chapter=Forest | PlayerAlive=yes HP=1
+[LOG] Game saved. Chapter=1 HP=1
+[LOG] Starting chapter: Mountain | HP=1 ATK=22 DEF=2 Gold=13
