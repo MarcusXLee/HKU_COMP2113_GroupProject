@@ -197,7 +197,7 @@ void UIManager::showVictory() {
 
 void UIManager::printRandomRoast() {
     vector<string> roasts;
-    ifstream file("roast.txt");
+    ifstream file("UI/roast.txt");
  
     if (file.is_open()) {
         string line;

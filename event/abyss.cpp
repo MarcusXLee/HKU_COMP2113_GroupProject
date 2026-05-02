@@ -57,8 +57,7 @@ void runAbyssEvent(int eventId, Player &player, bool isHard) {
         cout << "1. Avoid it" << endl;
         cout << "2. Destroy it" << endl;
 
-        int choice;
-        cin >> choice;
+        int choice = getValidEventChoice(1, 2);
 
         if (choice == 1) {
             cout << "You avoid the evil creature, but you are still cursed by it." << endl;
@@ -71,9 +70,6 @@ void runAbyssEvent(int eventId, Player &player, bool isHard) {
             cout << "You decide to destroy the evil creature." << endl;
             Enemy enemy = createEnemy(EnemyType::EvilCreature, isHard);
             startBattle(player, enemy);
-        }
-        else {
-            cout << "Invalid choice. Nothing happens." << endl;
         }
     }
 
@@ -253,8 +249,7 @@ void runAbyssEvent(int eventId, Player &player, bool isHard) {
 
         cout << "1. Deal!" << endl;
 
-        int choice;
-        cin >> choice;
+        int choice = getValidEventChoice(1, 1);
 
         if (choice == 1) {
             int gold = getPlayerGold(player);       // Fixed: was getGold
@@ -266,9 +261,6 @@ void runAbyssEvent(int eventId, Player &player, bool isHard) {
 
             cout << "You gave up all your gold." << endl;
             cout << "You gained " << gain << " Attack and " << gain << " Defense." << endl;
-        }
-        else {
-            cout << "Invalid choice. Nothing happens." << endl;
         }
     }
 

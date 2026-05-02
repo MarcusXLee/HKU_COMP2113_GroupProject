@@ -42,11 +42,7 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
         cout << "1. Drop everything and run for your life" << endl;
         cout << "2. Leave it to fate" << endl;
 
-        // Variable to hold the user's input
-        int choice;
-        
-        // Read input from the console
-        cin >> choice;
+       int choice = getValidEventChoice(1, 2);
 
         // Process Choice 1: The coward's route
         if (choice == 1) {
@@ -75,11 +71,6 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
             cout << "You lost " << damage << " HP." << endl;
             
         }
-        // Process Invalid Input
-        else {
-            // Failsafe for incorrect console input
-            cout << "Invalid choice. Nothing happens." << endl;
-        }
     }
     else if (eventId == 8) {
 
@@ -104,12 +95,7 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
         // Display player choices
         cout << "1. Kneel and pray sincerely" << endl;
         cout << "2. Reject the gods" << endl;
-
-        // Variable to hold the user's input
-        int choice;
-        
-        // Read input from the console
-        cin >> choice;
+        int choice = getValidEventChoice(1, 2);
 
         // Process Choice 1: Submission and payment
         if (choice == 1) {
@@ -134,11 +120,6 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
             changePlayerAttack(player, -1);     // Reduce offensive power
             
         }
-        // Process Invalid Input
-        else {
-            // Failsafe for incorrect console input
-            cout << "Invalid choice. Nothing happens." << endl;
-        }
     }
     else if (eventId == 10){
         // Execute external function for Event 10
@@ -155,11 +136,7 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
         cout << "1. Stay cowardly" << endl;
         cout << "2. Fight for justice" << endl;
 
-        // Variable to hold the user's input
-        int choice;
-        
-        // Read input from the console
-        cin >> choice;
+        int choice = getValidEventChoice(1, 2);
 
         // Process Choice 1: Avoid combat, lose morality
         if (choice == 1) {
@@ -184,11 +161,6 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
             startBattle(player, enemy);             
             
         }
-        // Process Invalid Input
-        else {
-            // Failsafe for incorrect console input
-            cout << "Invalid choice. Nothing happens." << endl;
-        }
     }
     else if (eventId == 12) {
 
@@ -200,11 +172,7 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
         cout << "1. Hunt the Fire Spirit" << endl;
         cout << "2. Trade fairly" << endl;
 
-        // Variable to hold the user's input
-        int choice;
-        
-        // Read input from the console
-        cin >> choice;
+        int choice = getValidEventChoice(1, 2);
 
         // Process Choice 1: Aggressive path
         if (choice == 1) {
@@ -234,11 +202,6 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
             changePlayerAttack(player, +1);    // Increase offensive power
             
         }
-        // Process Invalid Input
-        else {
-            // Failsafe for incorrect console input
-            cout << "Invalid choice. Nothing happens." << endl;
-        }
     }
     else if (eventId == 13) {
 
@@ -250,11 +213,7 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
         cout << "1. Walk away quietly" << endl;
         cout << "2. Steal the egg" << endl;
 
-        // Variable to hold the user's input
-        int choice;
-        
-        // Read input from the console
-        cin >> choice;
+        int choice = getValidEventChoice(1, 2);
 
         // Process Choice 1: The safe route
         if (choice == 1) {
@@ -299,11 +258,6 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
                 startBattle(player, enemy);             
                 
             }
-        }
-        // Process Invalid Input
-        else {
-            // Failsafe for incorrect console input
-            cout << "Invalid choice. Nothing happens." << endl;
         }
     }
     else if (eventId == 14) {

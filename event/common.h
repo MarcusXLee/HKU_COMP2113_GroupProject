@@ -10,5 +10,6 @@ void runGamblingEvent(Player &player);
 void runFoodCartEvent(Player &player);
 void runRevengeGodBlessingEvent(Player &player);
 void runMasterHermitEvent(Player &player);
+int getValidEventChoice(int min, int max);
  
 #endif

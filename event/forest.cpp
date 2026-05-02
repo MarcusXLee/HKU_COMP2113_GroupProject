@@ -20,8 +20,7 @@ void runForestEvent(int eventId, Player &player, bool isHard) {
         cout << "1. Give them your gold" << endl;
         cout << "2. Fight back" << endl;
 
-        int choice;
-        cin >> choice;
+        int choice = getValidEventChoice(1, 2);
 
         if (choice == 1) {
             cout << "You hand over half of your gold. "
@@ -53,9 +52,7 @@ void runForestEvent(int eventId, Player &player, bool isHard) {
         cout << "1. Rest" << endl;
         cout << "2. Steal from the blacksmith" << endl;
 
-        int choice;
-        cin >> choice;
-
+        int choice = getValidEventChoice(1, 2);
         if (choice == 1) {
             cout << "You decide to take a full day of rest." << endl;
 
@@ -88,8 +85,7 @@ void runForestEvent(int eventId, Player &player, bool isHard) {
         cout << "1. Rob them" << endl;
         cout << "2. Help them" << endl;
 
-        int choice;
-        cin >> choice;
+        int choice = getValidEventChoice(1, 2);
 
         if (choice == 1) {
             cout << "There are no strong men left in the village." << endl;
@@ -128,8 +124,7 @@ void runForestEvent(int eventId, Player &player, bool isHard) {
         cout << "1. Search the remains" << endl;
         cout << "2. Bury the body" << endl;
 
-        int choice;
-        cin >> choice;
+        int choice = getValidEventChoice(1, 2);
 
         if (choice == 1) {
             int r1 = rand() % 4;
@@ -177,9 +172,7 @@ void runForestEvent(int eventId, Player &player, bool isHard) {
         cout << "1. Eliminate the beast" << endl;
         cout << "2. Avoid it" << endl;
 
-        int choice;
-        cin >> choice;
-
+        int choice = getValidEventChoice(1, 2);
         if (choice == 1) {
             cout << "You decide to hunt the tiger." << endl;
 
@@ -214,8 +207,7 @@ void runForestEvent(int eventId, Player &player, bool isHard) {
         cout << "2. Offense is the best defense" << endl;
         cout << "3. Defense is the best offense" << endl;
 
-        int choice;
-        cin >> choice;
+        int choice = getValidEventChoice(1, 3);
 
         if (choice == 1) {
             cout << "You learn a balanced fighting style." << endl;
@@ -265,8 +257,7 @@ void runForestEvent(int eventId, Player &player, bool isHard) {
         cout << "1. Small prey" << endl;
         cout << "2. Medium prey" << endl;
         cout << "3. Large prey" << endl;
-        int choice;
-        cin >> choice;
+        int choice = getValidEventChoice(1, 3);
 
         if (choice == 1) {
             cout << "You decide to hunt small prey." << endl;
@@ -303,9 +294,7 @@ void runForestEvent(int eventId, Player &player, bool isHard) {
         cout << "3. Collect and sell it" << endl;
         cout << "4. Purify your sins" << endl;
 
-        int choice;
-        cin >> choice;
-
+        int choice = getValidEventChoice(1, 4);
         if (choice == 1) {
             cout << "You clean your wounds and recover some health." << endl;
 

@@ -3,6 +3,8 @@
 #include "../player/player.h"
 #include "../enemy/enemy.h"
 #include "common.h"
+#include <limits>
+#include "../UI/ui.h"
 // Note: startBattle() is declared in combat system/Combat.h.
 // Add: #include "../combat system/Combat.h"  once that header is finalised.
 // For now we forward-declare it so every event file compiles independently.
@@ -21,8 +23,7 @@ void runBattleGodBlessingEvent(Player &player)
     cout << "1. Pray sincerely" << endl;
     cout << "2. Reject the gods" << endl;
 
-    int choice;
-    cin >> choice;
+    int choice = getValidEventChoice(1, 2);
 
     if (choice == 1)
     {
@@ -102,8 +103,7 @@ void runMerchantEvent(Player &player, bool isHard) {
     cout << "2. Buy an armor" << endl;
     cout << "3. Rob the merchant" << endl;
 
-    int choice;
-    cin >> choice;
+    int choice = getValidEventChoice(1, 3);
 
     if (choice == 1) {
         cout << "Choose your weapon:" << endl;
@@ -111,8 +111,7 @@ void runMerchantEvent(Player &player, bool isHard) {
         cout << "2. Fine Weapon (-15 gold, +2 Attack)" << endl;
         cout << "3. Top Weapon (-25 gold, +3 Attack)" << endl;
 
-        int subChoice;
-        cin >> subChoice;
+        int subChoice = getValidEventChoice(1, 3);
 
         if (subChoice == 1) {
             changePlayerGold(player, -5);       // Fixed
@@ -178,8 +177,7 @@ void runGamblingEvent(Player &player) {
     cout << "2. Big bet" << endl;
     cout << "3. All in" << endl;
 
-    int choice;
-    cin >> choice;
+    int choice = getValidEventChoice(1, 3);
 
     if (choice == 1) {
         int r = rand() % 100;
@@ -240,8 +238,7 @@ void runFoodCartEvent(Player &player) {
     cout << "2. Have a full meal (-5 gold, restore 30% HP)" << endl;
     cout << "3. Try magical food (-15 gold)" << endl;
 
-    int choice;
-    cin >> choice;
+    int choice = getValidEventChoice(1, 3);
 
     if (choice == 1) {
         cout << "You enjoy a small snack." << endl;
@@ -294,8 +291,7 @@ void runRevengeGodBlessingEvent(Player &player) {
     cout << "2. Aggressive revenge" << endl;
     cout << "3. Mad revenge" << endl;
 
-    int choice;
-    cin >> choice;
+    int choice = getValidEventChoice(1, 3);
 
     if (choice == 1) {
         cout << "The God of Revenge is disappointed, but still grants you power." << endl;
@@ -329,8 +325,7 @@ void runMasterHermitEvent(Player &player) {
     cout << "1. Follow the balanced path" << endl;
     cout << "2. Take an unconventional approach" << endl;
 
-    int choice;
-    cin >> choice;
+    int choice = getValidEventChoice(1, 2);
 
     if (choice == 1) {
         cout << "The master teaches you a balanced style." << endl;
@@ -362,5 +357,23 @@ void runMasterHermitEvent(Player &player) {
     }
     else {
         cout << "Invalid choice. Nothing happens." << endl;
+    }
+}
+
+int getValidEventChoice(int min, int max) {
+    UIManager ui; // 实例化 UI 对象用来调用 roast
+    int choice;
+    while (true) {
+        // 如果输入合法，直接返回
+        if (cin >> choice && choice >= min && choice <= max) {
+            return choice;
+        }
+        // 如果输入不合法（如字母或越界数字），触发嘲讽！
+        ui.printRandomRoast(); 
+        cout << "Your choice (" << min << " - " << max << "): ";
+
+        // 清除输入流的错误状态并清空缓冲区
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 }
