@@ -102,8 +102,9 @@ void runMerchantEvent(Player &player, bool isHard) {
     cout << "1. Buy a weapon" << endl;
     cout << "2. Buy an armor" << endl;
     cout << "3. Rob the merchant" << endl;
+    cout << "4. Leave peacefully" << endl;
 
-    int choice = getValidEventChoice(1, 3);
+    int choice = getValidEventChoice(1, 4);
 
     if (choice == 1) {
         cout << "Choose your weapon:" << endl;
@@ -162,6 +163,9 @@ void runMerchantEvent(Player &player, bool isHard) {
         Enemy enemy = createEnemy(EnemyType::WanderingMerchant_Forest, isHard);
         startBattle(player, enemy);
     }
+    else if (choice == 4) {
+            cout << "You politely decline and continue your journey." << endl;
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -176,8 +180,9 @@ void runGamblingEvent(Player &player) {
     cout << "1. Small bet" << endl;
     cout << "2. Big bet" << endl;
     cout << "3. All in" << endl;
+    cout << "4. Walk away." << endl;
 
-    int choice = getValidEventChoice(1, 3);
+    int choice = getValidEventChoice(1, 4);
 
     if (choice == 1) {
         int r = rand() % 100;
@@ -224,6 +229,9 @@ void runGamblingEvent(Player &player) {
             setPlayerGold(player, getPlayerGold(player) * 2); // Fixed: was doubleGold
         }
     }
+    else if (choice == 4) {
+        cout << "You resist the temptation and leave the gambling house." << endl;
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -237,8 +245,10 @@ void runFoodCartEvent(Player &player) {
     cout << "1. Have a snack (-2 gold, restore 10% HP)" << endl;
     cout << "2. Have a full meal (-5 gold, restore 30% HP)" << endl;
     cout << "3. Try magical food (-15 gold)" << endl;
+    cout << "4. Not hungry, leave" << endl;
 
-    int choice = getValidEventChoice(1, 3);
+
+    int choice = getValidEventChoice(1, 4);
 
     if (choice == 1) {
         cout << "You enjoy a small snack." << endl;
@@ -275,6 +285,9 @@ void runFoodCartEvent(Player &player) {
             changePlayerDefense(player, -loss);         // Fixed
             changePlayerAttack(player, 2 * loss);       // Fixed
         }
+    }
+    else if (choice == 4) {
+        cout << "You are not hungry right now and walk away." << endl;
     }
 }
 
