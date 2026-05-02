@@ -14,19 +14,48 @@ void GameManager::start() {
 }
 
 void GameManager::initGame() {
-    int choice = uiManager.showDifficultyMenu(); //Using UI
-    isHardMode = (choice == 2); //1 is False(easy), 2 is True(difficult)
-    // Member E: Setup terminal settings
+    // ── Step 1: title screen ────────────────────────────────────────────────
     uiManager.initScreen();
-    
-    // Member D: Load event texts from .txt/.json
+ 
+    // ── Step 2: pre-load any external resources ─────────────────────────────
     fileIO.loadGameData();
-    
-    uiManager.showMainMenu();
-    
-    // Member B & E: Prompt difficulty and init player stats
+ 
+    // ── Step 3: New Game vs Load Save (Task 3) ───────────────────────────────
+    int startChoice = uiManager.showStartMenu();   // 1 = New, 2 = Load
+ 
+    if (startChoice == 2) {
+        // ── Attempt to load a saved game ──────────────────────────────────
+        int savedChapterIdx = 0;
+        bool savedHard      = false;
+ 
+        bool loaded = fileIO.loadGame(player, savedChapterIdx, savedHard);
+ 
+        if (loaded) {
+            // Restore chapter enum from its integer index
+            switch (savedChapterIdx) {
+                case 0:  currentChapter = Chapter::FOREST;    break;
+                case 1:  currentChapter = Chapter::MOUNTAIN;  break;
+                case 2:  currentChapter = Chapter::ABYSS;     break;
+                default: currentChapter = Chapter::COMPLETED; break;
+            }
+            isHardMode = savedHard;
+ 
+            uiManager.printMessage("Previous progress restored!");
+            uiManager.initStats(player);   // Task 1 – show loaded stats
+            return;                        // skip difficulty + createPlayer
+        }
+ 
+        // Save file missing or corrupt – fall through to new game
+        uiManager.printMessage("No valid save found. Starting a new game.");
+    }
+ 
+    // ── New Game path ────────────────────────────────────────────────────────
     int difficulty = uiManager.showDifficultyMenu();
-    player.initStats(difficulty); 
+    isHardMode     = (difficulty == HARD_MODE);
+    player         = createPlayer(difficulty);
+ 
+    uiManager.initStats(player);           // Task 1 – show starting stats
+    currentChapter = Chapter::FOREST;
 }
 
 // The core Game Loop
@@ -51,7 +80,15 @@ void GameManager::gameLoop() {
 
 // Handle the "7 random events + 1 Boss" logic
 void GameManager::processChapter() {
-    uiManager.showChapterIntro(static_cast<int>(currentChapter));
+    std::string chapterNames[] = { "Forest", "Mountain", "Abyss", "Completed" };
+    int chIdx = static_cast<int>(currentChapter);
+    fileIO.writeLog("Starting chapter: " + chapterNames[chIdx]
+                    + " | HP=" + std::to_string(getPlayerHP(player))
+                    + " ATK=" + std::to_string(getPlayerAttack(player))
+                    + " DEF=" + std::to_string(getPlayerDefense(player))
+                    + " Gold=" + std::to_string(getPlayerGold(player)));
+ 
+    uiManager.showChapterIntro(chIdx);
     eventCount = 0;
 
     // Loop exactly 7 times for random events
@@ -68,8 +105,12 @@ void GameManager::processChapter() {
     }
 
     // Trigger chapter boss if player survived the 7 events
-    if (getPlayerHP(player) > 0) {
+    if (getPlayerHP(player) > 0) 
+    {
         triggerBoss();
+        fileIO.writeLog("Boss battle ended. Chapter=" + chapterNames[chIdx]
+                        + " | PlayerAlive=" + (isPlayerAlive(player) ? "yes" : "no")
+                        + " HP=" + std::to_string(getPlayerHP(player)));
     }
 }
 
