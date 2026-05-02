@@ -4,7 +4,7 @@
 
 // Include headers that will be implemented by other members
 #include "../player/player.h"        // Member B
-#include "EventManager.h"  // Member C
+#include "../event/EventManager.h"  // Member C
 #include "../UI/ui.h"     // Member E
 #include "../FileIO/fileio.h"        // Member D
 #include "combat.h"        // Member B

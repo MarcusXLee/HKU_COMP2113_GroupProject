@@ -15,6 +15,13 @@ void GameManager::start() {
 void GameManager::initGame() {
     // ── Step 1: title screen ────────────────────────────────────────────────
     uiManager.initScreen();
+    //Play story
+    std::vector<std::string> storyLines = fileIO.readTextFile("UI/story.txt");
+    std::cout << "\n";
+    for (const std::string& line : storyLines) {
+        std::cout << line << std::endl;
+    }
+    std::cout << "\n";
  
     // ── Step 2: pre-load any external resources ─────────────────────────────
     fileIO.loadGameData();

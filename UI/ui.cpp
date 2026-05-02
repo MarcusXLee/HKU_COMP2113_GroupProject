@@ -35,12 +35,8 @@ int UIManager::getValidInput(int min, int max) {
 void UIManager::initScreen() {
     clearScreen();
     cout << "=============================================" << endl;
-    cout << "        WELCOME TO THE ADVENTURE GAME        " << endl;
+    cout << "           THE VENGEFUL ADVENTURER           " << endl;
     cout << "=============================================" << endl;
-    cout << "   Face the forest, mountain, and abyss...   " << endl;
-    cout << "         Defeat the Demon King!               " << endl;
-    cout << "=============================================" << endl;
-    cout << endl;
 }
 
 void UIManager::initStats(const Player &p) {
@@ -111,7 +107,7 @@ int UIManager::showDifficultyMenu()
 
 int UIManager::showMainMenu() {
     cout << "=============================================" << endl;
-    cout << "           ADVENTURE GAME — v1.0             " << endl;
+    cout << "        THE VENGEFUL ADVENTURER — v1.0       " << endl;
     cout << "=============================================" << endl;
     return 0;
 }
