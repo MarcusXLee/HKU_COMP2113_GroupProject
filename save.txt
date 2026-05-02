@@ -1,8 +1,0 @@
-chapter 1
-hard 0
-hp 1
-maxHp 24
-attack 22
-defense 2
-gold 13
-kindness 0
