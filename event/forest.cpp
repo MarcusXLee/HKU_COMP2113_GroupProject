@@ -3,8 +3,7 @@
 #include "../player/player.h"
 #include "../enemy/enemy.h"
 #include "common.h"
-// Forward-declare startBattle until Combat.h is finalised.
-bool startBattle(Player &player, Enemy &enemy);
+#include "../combat_system/combat.h"
 
 using namespace std;
 

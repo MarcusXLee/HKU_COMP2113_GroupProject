@@ -314,9 +314,7 @@ void runRevengeGodBlessingEvent(Player &player) {
 
         leavePlayerAtOneHP(player);                                     // Fixed: was setHPToOne
         int currentAtk = getPlayerAttack(player);
-        changePlayerAttack(player, -2);                                 // Fixed
-        changePlayerAttack(player, getPlayerAttack(player));            // Fixed: was doubleAttack
-        setPlayerAttack(player, getPlayerAttack(player) * 2);
+        setPlayerAttack(player, currentAtk * 2);
     }
 }
 

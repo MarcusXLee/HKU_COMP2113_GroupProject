@@ -3,7 +3,6 @@
 // Constructor: Initialize starting state
 GameManager::GameManager() {
     currentChapter = Chapter::FOREST;
-    eventCount = 0;
     isGameOver = false;
 }
 
@@ -89,7 +88,7 @@ void GameManager::processChapter() {
                     + " Gold=" + std::to_string(getPlayerGold(player)));
  
     uiManager.showChapterIntro(chIdx);
-    eventCount = 0;
+    int eventCount = 0;
 
     // Loop exactly 7 times for random events
     while (eventCount < 7 && getPlayerHP(player) > 0) {

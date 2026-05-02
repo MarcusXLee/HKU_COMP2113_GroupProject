@@ -79,7 +79,7 @@ int UIManager::showStartMenu() {
 }
 
 //Choosing Difficulty level
-int showDifficultyMenu() 
+int UIManager::showDifficultyMenu()
 {
     int choice;
     while (true) 

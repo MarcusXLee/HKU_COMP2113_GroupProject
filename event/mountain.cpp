@@ -4,9 +4,9 @@
 #include "../player/player.h"
 #include "../enemy/enemy.h"
 #include "../event/common.h"
+#include "../combat_system/combat.h"
 
 using namespace std;
-bool startBattle(Player &player, Enemy &enemy);
 
 void runMountainEvent(int eventId, Player &player, bool isHard) {
     if (eventId == 1) {

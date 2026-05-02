@@ -6,7 +6,7 @@
 #include "../player/player.h"        // Member B
 #include "EventManager.h"  // Member C
 #include "../UI/ui.h"     // Member E
-#include "../FileI:O/filei:o.h"        // Member D
+#include "../FileIO/fileio.h"        // Member D
 #include "combat.h"        // Member B
 
 // Define the linear progression of chapters
@@ -22,7 +22,6 @@ private:
     bool isHardMode;
     Player player;
     Chapter currentChapter;
-    int eventCount;
     bool isGameOver;
 
     // Module managers implemented by teammates

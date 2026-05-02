@@ -3,8 +3,7 @@
 #include "../player/player.h"
 #include "../enemy/enemy.h"
 #include "common.h"
-// Forward-declare startBattle until Combat.h is finalised.
-bool startBattle(Player &player, Enemy &enemy);
+#include "../combat_system/combat.h"
 
 using namespace std;
 
@@ -94,7 +93,7 @@ void runAbyssEvent(int eventId, Player &player, bool isHard) {
         cout << "Great Demon!" << endl;
         cout << "A Great Demon stands before you." << endl;
         cout << "Its hands are stained with human blood." << endl;
-        Enemy enemy = createBoss(3, isHard);
+        Enemy enemy = createEnemy(EnemyType::ArchDemon, isHard);
         startBattle(player, enemy);
     }
 

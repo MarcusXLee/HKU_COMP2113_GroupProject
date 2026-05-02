@@ -1,8 +1,5 @@
 #include "enemy.h"
 
-// 难度开关：false=简单，true=困难
-static const bool HARD_MODE = false;
-
 // 内部辅助函数，封装生成逻辑
 static Enemy makeEnemy(const std::string& name, int baseHp, int baseAtk, int baseDef, bool isHard, int extraLives = 0) {
     Enemy e;

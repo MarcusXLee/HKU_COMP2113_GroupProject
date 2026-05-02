@@ -21,9 +21,9 @@ bool startBattle(Player &player, Enemy &enemy, UIManager &ui)
         int choice = ui.getBattleChoice(); // 1.Fight 2.Flight
 
         if (choice == 2) { // Flee
-            int penalty = player.maxHp * 0.2;
+            int penalty = player.maxHp / 5;
             player.hp -= penalty;
-            cout << "You fled and lost" << penalty << "HP" << endl;
+            cout << "You fled and lost " << penalty << " HP" << endl;
             return false; 
         }
 
@@ -51,4 +51,9 @@ bool startBattle(Player &player, Enemy &enemy, UIManager &ui)
         cout << enemy.name << " caused" << dmgToPlayer << " points of harm to you" << endl;
     }
     return player.hp > 0;
+}
+
+bool startBattle(Player &player, Enemy &enemy) {
+    UIManager ui;
+    return startBattle(player, enemy, ui);
 }
