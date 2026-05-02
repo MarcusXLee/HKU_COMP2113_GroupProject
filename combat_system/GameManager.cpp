@@ -115,13 +115,16 @@ void GameManager::processChapter() {
 
 // Spawn and fight the chapter boss
 void GameManager::triggerBoss() {
-    uiManager.printMessage("Warning: Boss is approaching!"); // fixed UI usage
-    
-    // Generate the BOSS of the chapter
+    uiManager.printMessage("Warning: Boss is approaching!");
     Enemy boss = eventManager.generateBoss(static_cast<int>(currentChapter), isHardMode);
     
-    // Using startbattle function directly
-    startBattle(player, boss, uiManager);;
+    //Recieving the result of battle
+    bool win = startBattle(player, boss, uiManager);
+    
+    // If dead or fled, HP=0
+    if (!win) {
+        setPlayerHP(player, 0); 
+    }
 }
 
 // Move to the next stage
@@ -139,4 +142,5 @@ void GameManager::advanceChapter() {
         default: 
             break;
     }
+    fileIO.saveGame(player, static_cast<int>(currentChapter), isHardMode);
 }
