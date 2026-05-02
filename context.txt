@@ -8,6 +8,7 @@ HKU_COMP2113_GroupProject
 │   ├── filei:o.cpp
 │   └── filei:o.h
 ├── UI
+│   ├── roast.txt
 │   ├── ui.cpp
 │   └── ui.h
 ├── combat_system
@@ -44,6 +45,7 @@ HKU_COMP2113_GroupProject
 // Setting the name of log
 FileIO::FileIO() {
     logFileName = "game_log.txt";
+    saveFileName = "save.txt";
     
     // Writing the launching mark into log
     std::ofstream logFile(logFileName, std::ios::app);
@@ -87,7 +89,8 @@ std::vector<std::string> FileIO::readTextFile(const std::string& filename) {
             lines.push_back(line);
         }
         inFile.close();
-    } else {
+    } 
+    else {
         std::cerr << "[Warning] Could not read text file: " << filename << std::endl;
         // Error report
         lines.push_back("Error 404: Text not found."); 
@@ -95,6 +98,86 @@ std::vector<std::string> FileIO::readTextFile(const std::string& filename) {
 
     return lines;
 }
+
+//Saving Game Progress
+void FileIO::saveGame(const Player &p, int chapterIndex, bool isHardMode) {
+    std::ofstream out(saveFileName);       // overwrites any previous save
+    if (!out.is_open()) {
+        std::cerr << "[Error] Could not open save file for writing: "
+                  << saveFileName << std::endl;
+        return;
+    }
+ 
+    out << "chapter "  << chapterIndex          << "\n";
+    out << "hard "     << (isHardMode ? 1 : 0)  << "\n";
+    out << "hp "       << getPlayerHP(p)         << "\n";
+    out << "maxHp "    << getPlayerMaxHP(p)      << "\n";
+    out << "attack "   << getPlayerAttack(p)     << "\n";
+    out << "defense "  << getPlayerDefense(p)    << "\n";
+    out << "gold "     << getPlayerGold(p)       << "\n";
+    out << "kindness " << getPlayerKindness(p)   << "\n";
+ 
+    out.close();
+ 
+    writeLog("Game saved. Chapter=" + std::to_string(chapterIndex)
+             + " HP=" + std::to_string(getPlayerHP(p)));
+    std::cout << "[System] Game saved successfully." << std::endl;
+}
+
+//Load the game
+bool FileIO::loadGame(Player &p, int &chapterIndex, bool &isHardMode) {
+    std::ifstream in(saveFileName);
+    if (!in.is_open()) {
+        std::cerr << "[Warning] No save file found: " << saveFileName << std::endl;
+        return false;
+    }
+ 
+    // Temporary variables so we only modify the out-params on full success
+    int  chapter = 0, hard = 0;
+    int  hp = 0, maxHp = 0, attack = 0, defense = 0, gold = 0, kindness = 0;
+ 
+    std::string label;
+    bool ok = true;
+ 
+    // Read exactly 8 labelled lines
+    auto readInt = [&](const std::string& expected, int &dest) {
+        std::string lbl;
+        if (!(in >> lbl >> dest) || lbl != expected) {
+            std::cerr << "[Error] Save file corrupt at field: " << expected << std::endl;
+            ok = false;
+        }
+    };
+ 
+    readInt("chapter",  chapter);
+    readInt("hard",     hard);
+    readInt("hp",       hp);
+    readInt("maxHp",    maxHp);
+    readInt("attack",   attack);
+    readInt("defense",  defense);
+    readInt("gold",     gold);
+    readInt("kindness", kindness);
+ 
+    in.close();
+ 
+    if (!ok) return false;
+ 
+    // Commit values to the out-parameters
+    chapterIndex = chapter;
+    isHardMode   = (hard != 0);
+ 
+    setPlayerMaxHP(p,    maxHp);
+    setPlayerHP(p,       hp);
+    setPlayerAttack(p,   attack);
+    setPlayerDefense(p,  defense);
+    setPlayerGold(p,     gold);
+    setPlayerKindness(p, kindness);
+ 
+    writeLog("Game loaded. Chapter=" + std::to_string(chapterIndex)
+             + " HP=" + std::to_string(getPlayerHP(p)));
+    std::cout << "[System] Game loaded successfully." << std::endl;
+    return true;
+}
+ 
 ```
 
 `FileI:O/filei:o.h`:
@@ -105,40 +188,139 @@ std::vector<std::string> FileIO::readTextFile(const std::string& filename) {
 
 #include <string>
 #include <iostream>
+#include "../player/player.h"   // needed for Player struct
 
 class FileIO {
 private:
     std::string logFileName;
+    std::string saveFileName;
 
 public:
-    // 构造函数，初始化时可以清空旧日志或写入启动时间
     FileIO();
-    
-    // 负责系统初始化时的一些读取或检查
+ 
+    // Checks / pre-loads any required local resources.
     void loadGameData();
-
-    // 核心功能 1：追加写入日志
-    // 示例用法：fileIO.writeLog("Player entered Forest. Event 3 triggered.");
+ 
+    // Appends a timestamped entry to game_log.txt.
     void writeLog(const std::string& message);
-
-    // 核心功能 2：读取外部文本文件（比如 ASCII Art，或者幽默语录）
-    // 返回一个 string 数组，每一行是数组的一个元素
+ 
+    // Reads every line of a plain-text file and returns them as a vector.
     std::vector<std::string> readTextFile(const std::string& filename);
+ 
+    // ── Task 2: Persistence ───────────────────────────────────────────────
+ 
+    // Writes the current game state (player stats + chapter) to save.txt
+    // using std::ofstream.
+    // chapterIndex: 0 = Forest, 1 = Mountain, 2 = Abyss, 3 = Completed
+    // isHardMode: stored so the game can restore the correct difficulty.
+    void saveGame(const Player &p, int chapterIndex, bool isHardMode);
+ 
+    // Reads save.txt with std::ifstream and fills the out-parameters.
+    // Returns true on success, false if the file does not exist or is corrupt.
+    bool loadGame(Player &p, int &chapterIndex, bool &isHardMode);
 };
 
 #endif
+```
+
+`UI/roast.txt`:
+
+```txt
+You mumbled something and the air is awkwardly quiet.
+Did you just said an ancient charm that nobody could understand?
+Are you trying to choose OR between 1 or 2?
+You said something in Gibberish and nobody could understand you.
+Impressive — you managed to choose something that wasn't even an option.
+Seems like you have drunk too much beer from the merchants.
+Even the goblins make better decisions than you.
+The Demon King is shaking with laughter at your input.
+I've seen rocks make better decisions. And they can't read.
+Try again. And this time, make sure you input numbers, not something from the devil.
+
 ```
 
 `UI/ui.cpp`:
 
 ```cpp
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
+#include <vector>
+#include <cstdlib>
 #include <limits>
 #include "ui.h"
 #include "../player/player.h"
 
 using namespace std;
+
+void UIManager::clearScreen() 
+{
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+int UIManager::getValidInput(int min, int max) {
+    int choice;
+    while (true) {
+        if (cin >> choice && choice >= min && choice <= max) {
+            return choice;
+        }
+        cout << "Invalid input. Please enter a number between "
+             << min << " and " << max << ": ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
+
+void UIManager::initScreen() {
+    clearScreen();
+    cout << "=============================================" << endl;
+    cout << "        WELCOME TO THE ADVENTURE GAME        " << endl;
+    cout << "=============================================" << endl;
+    cout << "   Face the forest, mountain, and abyss...   " << endl;
+    cout << "         Defeat the Demon King!               " << endl;
+    cout << "=============================================" << endl;
+    cout << endl;
+}
+
+void UIManager::initStats(const Player &p) {
+    cout << endl;
+    cout << "=============================================" << endl;
+    cout << "             YOUR STARTING STATS             " << endl;
+    cout << "=============================================" << endl;
+    cout << "  HP      : " << getPlayerHP(p)      << " / " << getPlayerMaxHP(p) << endl;
+    cout << "  Attack  : " << getPlayerAttack(p)  << endl;
+    cout << "  Defense : " << getPlayerDefense(p) << endl;
+    cout << "  Gold    : " << getPlayerGold(p)    << endl;
+    cout << "=============================================" << endl;
+    cout << endl;
+}
+
+int UIManager::showStartMenu() {
+    int choice;
+    while (true) {
+        cout << "=============================================" << endl;
+        cout << "                  MAIN MENU                  " << endl;
+        cout << "       1. New Game                           " << endl;
+        cout << "       2. Load Previous Progress             " << endl;
+        cout << "=============================================" << endl;
+        cout << "Please enter your option (1 or 2): ";
+ 
+        if (cin >> choice) {
+            if (choice == 1 || choice == 2) {
+                return choice;
+            }
+        }
+ 
+        cout << "\nInvalid input, please enter 1 or 2." << endl;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
 
 //Choosing Difficulty level
 int showDifficultyMenu() 
@@ -171,15 +353,116 @@ int showDifficultyMenu()
     }
 }
 
-// 示例：在 GameManager 或 main 中调用
-void initUIFlow(Player &p) {
-    cout << "Welcome to Adventure Game!" <<  endl;
-    int diff = showDifficultyMenu();
-    
-    // 调用队友写好的接口创建玩家
-    p = createPlayer(diff); 
-    
-    cout << "\nInitialized successfully! Current HP: " << getPlayerHP(p) <<  endl;
+int UIManager::showMainMenu() {
+    cout << "=============================================" << endl;
+    cout << "           ADVENTURE GAME — v1.0             " << endl;
+    cout << "=============================================" << endl;
+    return 0;
+}
+
+void UIManager::showChapterIntro(int chapterId) {
+    cout << endl;
+    cout << "=============================================" << endl;
+    switch (chapterId) {
+        case 0:
+            cout << "          CHAPTER 1 — THE FOREST             " << endl;
+            cout << "  Dark trees close around you as you venture  " << endl;
+            cout << "  deeper into the ancient forest...           " << endl;
+            break;
+        case 1:
+            cout << "          CHAPTER 2 — THE MOUNTAIN           " << endl;
+            cout << "  The air grows thin as you begin your        " << endl;
+            cout << "  treacherous climb toward the summit...      " << endl;
+            break;
+        case 2:
+            cout << "          CHAPTER 3 — THE ABYSS              " << endl;
+            cout << "  You descend into darkness. The Demon King   " << endl;
+            cout << "  awaits at the bottom...                     " << endl;
+            break;
+        default:
+            cout << "           UNKNOWN CHAPTER                   " << endl;
+            break;
+    }
+    cout << "=============================================" << endl;
+    cout << endl;
+}
+
+void UIManager::displayBattleStatus(const Player &p, const Enemy &e) {
+    cout << endl;
+    cout << "---------------------------------------------" << endl;
+    cout << "  [YOU]   HP: " << getPlayerHP(p)
+         << "/" << getPlayerMaxHP(p)
+         << "  ATK: " << getPlayerAttack(p)
+         << "  DEF: " << getPlayerDefense(p) << endl;
+    cout << "  [" << e.name << "]"
+         << "  HP: " << e.hp
+         << "  ATK: " << e.atk
+         << "  DEF: " << e.def << endl;
+    cout << "---------------------------------------------" << endl;
+}
+
+int UIManager::getBattleChoice() {
+    cout << "  1. Fight   2. Flee" << endl;
+    cout << "Your choice: ";
+    return getValidInput(1, 2);
+}
+
+int UIManager::showUpgradeMenu() {
+    cout << "=============================================" << endl;
+    cout << "              UPGRADE YOUR STATS             " << endl;
+    cout << "  1. Attack                                  " << endl;
+    cout << "  2. Defense                                 " << endl;
+    cout << "  3. Max HP                                  " << endl;
+    cout << "=============================================" << endl;
+    cout << "Your choice: ";
+    return getValidInput(1, 3);
+}
+
+void UIManager::printMessage(const std::string &message) {
+    cout << "[!] " << message << endl;
+}
+
+void UIManager::showGameOver() {
+    cout << endl;
+    cout << "=============================================" << endl;
+    cout << "                 GAME  OVER                  " << endl;
+    cout << "       You have fallen on your journey.      " << endl;
+    cout << "=============================================" << endl;
+}
+
+void UIManager::showVictory() {
+    cout << endl;
+    cout << "=============================================" << endl;
+    cout << "               CONGRATULATIONS!              " << endl;
+    cout << "       You have defeated the Demon King!     " << endl;
+    cout << "       Your revenge is complete.             " << endl;
+    cout << "=============================================" << endl;
+}
+
+void UIManager::printRandomRoast() {
+    vector<string> roasts;
+    ifstream file("roast.txt");
+ 
+    if (file.is_open()) {
+        string line;
+        while (getline(file, line)) {
+            // Skip blank lines so we never print an empty roast
+            if (!line.empty()) {
+                roasts.push_back(line);
+            }
+        }
+        file.close();
+    }
+ 
+    if (roasts.empty()) {
+        // Fallback: roast.txt missing or empty
+        cout << "[!] That's not a valid choice. Did you even read the options?" << endl;
+        return;
+    }
+ 
+    // Pick a uniformly random line (rand() is seeded in main.cpp)
+    int idx = rand() % static_cast<int>(roasts.size());
+    cout << "[!] " << roasts[idx] << endl;
 }
 ```
 
@@ -198,6 +481,9 @@ class UIManager
 {
 public:
     UIManager() = default;
+    void initScreen();
+    void initStats(const Player &p);
+    int showStartMenu();
     int showMainMenu();
     int showDifficultyMenu();
     void showChapterIntro(int chapterId);
@@ -207,7 +493,7 @@ public:
     void printMessage(const std::string &message);
     void showGameOver();
     void showVictory();
-
+    void printRandomRoast();
 private:
     int getValidInput(int min, int max);
     void clearScreen();
@@ -235,19 +521,48 @@ void GameManager::start() {
 }
 
 void GameManager::initGame() {
-    int choice = uiManager.showDifficultyMenu(); //Using UI
-    isHardMode = (choice == 2); //1 is False(easy), 2 is True(difficult)
-    // Member E: Setup terminal settings
+    // ── Step 1: title screen ────────────────────────────────────────────────
     uiManager.initScreen();
-    
-    // Member D: Load event texts from .txt/.json
+ 
+    // ── Step 2: pre-load any external resources ─────────────────────────────
     fileIO.loadGameData();
-    
-    uiManager.showMainMenu();
-    
-    // Member B & E: Prompt difficulty and init player stats
+ 
+    // ── Step 3: New Game vs Load Save (Task 3) ───────────────────────────────
+    int startChoice = uiManager.showStartMenu();   // 1 = New, 2 = Load
+ 
+    if (startChoice == 2) {
+        // ── Attempt to load a saved game ──────────────────────────────────
+        int savedChapterIdx = 0;
+        bool savedHard      = false;
+ 
+        bool loaded = fileIO.loadGame(player, savedChapterIdx, savedHard);
+ 
+        if (loaded) {
+            // Restore chapter enum from its integer index
+            switch (savedChapterIdx) {
+                case 0:  currentChapter = Chapter::FOREST;    break;
+                case 1:  currentChapter = Chapter::MOUNTAIN;  break;
+                case 2:  currentChapter = Chapter::ABYSS;     break;
+                default: currentChapter = Chapter::COMPLETED; break;
+            }
+            isHardMode = savedHard;
+ 
+            uiManager.printMessage("Previous progress restored!");
+            uiManager.initStats(player);   // Task 1 – show loaded stats
+            return;                        // skip difficulty + createPlayer
+        }
+ 
+        // Save file missing or corrupt – fall through to new game
+        uiManager.printMessage("No valid save found. Starting a new game.");
+    }
+ 
+    // ── New Game path ────────────────────────────────────────────────────────
     int difficulty = uiManager.showDifficultyMenu();
-    player.initStats(difficulty); 
+    isHardMode     = (difficulty == HARD_MODE);
+    player         = createPlayer(difficulty);
+ 
+    uiManager.initStats(player);           // Task 1 – show starting stats
+    currentChapter = Chapter::FOREST;
 }
 
 // The core Game Loop
@@ -272,7 +587,15 @@ void GameManager::gameLoop() {
 
 // Handle the "7 random events + 1 Boss" logic
 void GameManager::processChapter() {
-    uiManager.showChapterIntro(static_cast<int>(currentChapter));
+    std::string chapterNames[] = { "Forest", "Mountain", "Abyss", "Completed" };
+    int chIdx = static_cast<int>(currentChapter);
+    fileIO.writeLog("Starting chapter: " + chapterNames[chIdx]
+                    + " | HP=" + std::to_string(getPlayerHP(player))
+                    + " ATK=" + std::to_string(getPlayerAttack(player))
+                    + " DEF=" + std::to_string(getPlayerDefense(player))
+                    + " Gold=" + std::to_string(getPlayerGold(player)));
+ 
+    uiManager.showChapterIntro(chIdx);
     eventCount = 0;
 
     // Loop exactly 7 times for random events
@@ -289,8 +612,12 @@ void GameManager::processChapter() {
     }
 
     // Trigger chapter boss if player survived the 7 events
-    if (getPlayerHP(player) > 0) {
+    if (getPlayerHP(player) > 0) 
+    {
         triggerBoss();
+        fileIO.writeLog("Boss battle ended. Chapter=" + chapterNames[chIdx]
+                        + " | PlayerAlive=" + (isPlayerAlive(player) ? "yes" : "no")
+                        + " HP=" + std::to_string(getPlayerHP(player)));
     }
 }
 
