@@ -26,7 +26,7 @@ bool startBattle(Player &player, Enemy &enemy, UIManager &ui)
                 continue; // No flight in BOSS fight!
             }
             int penalty = player.maxHp / 5;
-            player.hp -= penalty;
+            player.hp = std::max(0, player.hp - penalty);
             cout << "You fled and lost " << penalty << " HP." << endl;
             //Reflecting current HP
             cout << "[!] Current HP: " << player.hp << " / " << player.maxHp << endl;
@@ -50,6 +50,22 @@ bool startBattle(Player &player, Enemy &enemy, UIManager &ui)
             }
             cout << "You defeated " << enemy.name << "!" << endl;
             cout << endl;
+            //Loot system
+            int goldDrop = 0;
+            if (enemy.name.find("(BOSS)") != std::string::npos) {
+                goldDrop = rand() % 11 + 10; // BOSS gives 10-20 coins if defeated
+                cout << "🌟 EPIC VICTORY! You found a massive chest containing " << goldDrop << " gold!" << endl;
+                cout << "💪 Absorbing the boss's core increases your HP by 2, Attack and Defense by 1!" << endl;
+                player.hp = std::min(player.hp + 2, player.maxHp);
+                player.attack += 1;
+                player.defense += 1;
+            } 
+            else {
+                goldDrop = rand() % 4 ; // Others give 0-3 coins if defeated
+                cout << "🪙 You looted " << goldDrop << " gold from the enemy's remains." << endl;
+            }
+            player.gold += goldDrop;
+            cout << endl;
             //Dashboard for post-battle status
             cout << "=== POST-BATTLE STATUS ===" << endl;
             cout << " HP      : " << player.hp << " / " << player.maxHp << endl;
@@ -63,7 +79,7 @@ bool startBattle(Player &player, Enemy &enemy, UIManager &ui)
 
         // Enemy Attack
         int dmgToPlayer = max(1, enemy.atk - player.defense);
-        player.hp -= dmgToPlayer;
+        player.hp = std::max(0, player.hp - dmgToPlayer);
         cout << enemy.name << " caused " << dmgToPlayer << " points of harm to you." << endl;
     }
     return player.hp > 0;

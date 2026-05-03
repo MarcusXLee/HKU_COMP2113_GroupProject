@@ -91,7 +91,7 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
         cout << "You arrive at the statue of the God of the Mountain." << endl;
         cout << "Perhaps you need the god's blessing to overcome the hardships ahead." << endl;
         cout << "Like the God of Battle, the God of the Mountain can also be 'persuaded' with gold." << endl;
-
+        cout << "💰 [Your Gold: " << getPlayerGold(player) << "]" << endl;
         // Display player choices
         cout << "1. Kneel and pray sincerely" << endl;
         cout << "2. Reject the gods" << endl;
@@ -167,12 +167,12 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
         // Display narrative text
         cout << "Fire Spirit" << endl;
         cout << "This is a volcano. The burning lava has given birth to a Fire Spirit." << endl;
-
+        cout << "💰 [Your Gold: " << getPlayerGold(player) << "]" << endl;
         // Display player choices
         cout << "1. Hunt the Fire Spirit" << endl;
         cout << "2. Trade fairly" << endl;
-
-        int choice = getValidEventChoice(1, 2);
+        cout << "3. Leave it" << endl;
+        int choice = getValidEventChoice(1, 3);
 
         // Process Choice 1: Aggressive path
         if (choice == 1) {
@@ -203,6 +203,10 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
                 changePlayerKindness(player, +1);  // Increase morality
                 changePlayerAttack(player, +1);    // Increase offensive power
             }
+        }
+        else if (choice==3)
+        {
+            cout << " You left the fire spirit with nothing happened." << endl;
         }
     }
     else if (eventId == 13) {

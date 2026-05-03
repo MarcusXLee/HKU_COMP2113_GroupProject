@@ -5,10 +5,7 @@
 #include "common.h"
 #include <limits>
 #include "../UI/ui.h"
-// Note: startBattle() is declared in combat system/Combat.h.
-// Add: #include "../combat system/Combat.h"  once that header is finalised.
-// For now we forward-declare it so every event file compiles independently.
-bool startBattle(Player &player, Enemy &enemy);
+#include "../combat_system/combat.h"
 
 using namespace std;
 
@@ -19,7 +16,7 @@ void runBattleGodBlessingEvent(Player &player)
 {
     cout << "Blessing of the God of Battle" << endl;
     cout << "After wandering for a while, you discover a statue of the God of Battle." << endl;
-
+    cout << "💰 [Your Gold: " << getPlayerGold(player) << "]" << endl;
     cout << "1. Pray sincerely" << endl;
     cout << "2. Reject the gods" << endl;
 
@@ -27,14 +24,14 @@ void runBattleGodBlessingEvent(Player &player)
 
     if (choice == 1)
     {
-        if (getPlayerGold(player) < 20) {
-            cout << "The gods do not accept empty promises. You need 20 gold. Nothing happens." << endl;
+        if (getPlayerGold(player) < 10) {
+            cout << "The gods do not accept empty promises. You need 10 gold. Nothing happens." << endl;
         }
         else{
             cout << "You kneel and pray for strength to defeat your enemies and avenge the Demon King." << endl;
             cout << "The God of Battle admires your courage and offers power in exchange for gold." << endl;
-            changePlayerGold(player, -20);      // Fixed: was changeGold
-            changePlayerAttack(player, +1);     // Fixed: was changeAttack
+            changePlayerGold(player, -10);      // Fixed: was changeGold
+            changePlayerAttack(player, +2);     // Fixed: was changeAttack
             changePlayerDefense(player, +1);    // Fixed: was changeDefense
         }
     }
@@ -57,14 +54,14 @@ void runJudgmentEvent(Player &player) {
 
     int kindness = getPlayerKindness(player);   // Fixed: was [function: getKindness(player)]
 
-    if (kindness >= 5) {
+    if (kindness >= 3) {
         cout << "Your kindness deserves a reward!" << endl;
 
-        changePlayerMaxHP(player, +5);      // Fixed: was changeMaxHP
+        changePlayerMaxHP(player, +3);      // Fixed: was changeMaxHP
         changePlayerAttack(player, +1);     // Fixed: was changeAttack
         changePlayerDefense(player, +1);    // Fixed: was changeDefense
     }
-    else if (kindness > 0 && kindness < 5) {
+    else if (kindness > 0 && kindness < 3) {
         cout << "Your kindness is worth encouraging!" << endl;
 
         changePlayerMaxHP(player, +3);      // Fixed: was changeMaxHP
@@ -102,7 +99,7 @@ void runMerchantEvent(Player &player, bool isHard) {
     cout << "Wandering Merchant" << endl;
     cout << "A wandering merchant offers many goods for sale." << endl;
     cout << "Use your gold to make a choice." << endl;
-
+    cout << "💰 [Your Gold: " << getPlayerGold(player) << "]" << endl;
     cout << "1. Buy a weapon" << endl;
     cout << "2. Buy an armor" << endl;
     cout << "3. Rob the merchant" << endl;
@@ -190,7 +187,7 @@ void runGamblingEvent(Player &player) {
     cout << "Gambling House" << endl;
     cout << "You accidentally enter a gambling house." << endl;
     cout << "Do you want to take a gamble?" << endl;
-
+    cout << "💰 [Your Gold: " << getPlayerGold(player) << "]" << endl;
     cout << "1. Small bet" << endl;
     cout << "2. Big bet" << endl;
     cout << "3. All in" << endl;
@@ -262,7 +259,7 @@ void runFoodCartEvent(Player &player) {
 
     cout << "Food Cart" << endl;
     cout << "The food cart arrives. Spend your gold to enjoy some perfect meals!" << endl;
-
+    cout << "💰 [Your Gold: " << getPlayerGold(player) << "]" << endl;
     cout << "1. Have a snack (-2 gold, restore 10% HP)" << endl;
     cout << "2. Have a full meal (-5 gold, restore 30% HP)" << endl;
     cout << "3. Try magical food (-15 gold)" << endl;

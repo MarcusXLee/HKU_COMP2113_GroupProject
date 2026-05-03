@@ -5,7 +5,7 @@ SRCS = $(wildcard FileIO/*.cpp UI/*.cpp combat_system/*.cpp enemy/*.cpp event/*.
 
 OBJS = $(SRCS:.cpp=.o)
 
-TARGET = adventure_game
+TARGET = vengeful_adventurer
 
 all: $(TARGET)
 
