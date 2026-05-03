@@ -19,16 +19,16 @@ Player createPlayer(int difficulty) {
     if (difficulty == HARD_MODE) {
         p.maxHp = 20;
         p.hp = 20;
-        p.attack = 7;
-        p.defense = 2;
-        p.gold = 10;
+        p.attack = 6;
+        p.defense = 0;
+        p.gold = 18;
         p.kindness = 0;
     } else {
         p.maxHp = 24;
         p.hp = 24;
-        p.attack = 8;
-        p.defense = 3;
-        p.gold = 10;
+        p.attack = 6;
+        p.defense = 1;
+        p.gold = 20;
         p.kindness = 0;
     }
 
