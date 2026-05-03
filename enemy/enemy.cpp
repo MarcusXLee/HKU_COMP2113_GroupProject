@@ -20,29 +20,29 @@ Enemy createEnemy(EnemyType type, bool isHard)
 {
     switch (type) {
         // ===== 森林 =====
-        case EnemyType::Goblin:                     return makeEnemy("Goblin", 6, 3, 0, isHard);
-        case EnemyType::WanderingMerchant_Forest:   return makeEnemy("Merchant (Forest)", 10, 4, 6, isHard);
-        case EnemyType::Tiger:                      return makeEnemy("Tiger", 9, 5, 1, isHard);
-        case EnemyType::Thief:                      return makeEnemy("Thief", 6, 4, 1, isHard);
+        case EnemyType::Goblin:                     return makeEnemy("Goblin", 4, 3, 0, isHard);
+        case EnemyType::WanderingMerchant_Forest:   return makeEnemy("Merchant (Forest)", 10, 2, 6, isHard);
+        case EnemyType::Tiger:                      return makeEnemy("Tiger", 8, 4, 1, isHard);
+        case EnemyType::Thief:                      return makeEnemy("Thief", 6, 3, 1, isHard);
         case EnemyType::Rabbit:                     return makeEnemy("Rabbit", 3, 1, 0, isHard);
         case EnemyType::Hellhound:                  return makeEnemy("Hellhound", 6, 3, 0, isHard);
-        case EnemyType::BrownBear:                  return makeEnemy("Brown Bear", 12, 6, 4, isHard);
-        case EnemyType::TreantBoss:                 return makeEnemy("Dryad (BOSS)", 18, 7, 5, 1, isHard);
+        case EnemyType::BrownBear:                  return makeEnemy("Brown Bear", 8, 3, 3, isHard);
+        case EnemyType::TreantBoss:                 return makeEnemy("Dryad (BOSS)", 12, 4, 1, isHard, 1);
 
         // ===== 高山 =====
-        case EnemyType::Griffon:                    return makeEnemy("Griffin", 10, 6, 2, isHard);
-        case EnemyType::Bandit:                     return makeEnemy("Bandit", 6, 4, 1, isHard);
-        case EnemyType::FireSprite:                 return makeEnemy("Fire Spirit", 12, 7, 0, isHard);
-        case EnemyType::Dragon:                     return makeEnemy("Dragon", 14,8,6, isHard);
+        case EnemyType::Griffon:                    return makeEnemy("Griffin", 9, 4, 2, isHard);
+        case EnemyType::Bandit:                     return makeEnemy("Bandit", 6, 3, 1, isHard);
+        case EnemyType::FireSprite:                 return makeEnemy("Fire Spirit", 10, 6, 1, isHard);
+        case EnemyType::Dragon:                     return makeEnemy("Dragon", 12,6,4, isHard);
         case EnemyType::WanderingMerchant_Mountain: return makeEnemy("Merchant (Mountain)", 10, 4, 6, isHard);
-        case EnemyType::RockGiantBoss:              return makeEnemy("Rock Giant (BOSS)", 22, 10, 7, isHard);
+        case EnemyType::RockGiantBoss:              return makeEnemy("Rock Giant (BOSS)", 28, 6, 4, isHard);
 
         // ===== 深渊 =====
-        case EnemyType::EvilCreature:               return makeEnemy("Evil Creature", 14, 8, 6, isHard);
-        case EnemyType::DragonkinSoldier:           return makeEnemy("Dragon Soldier", 14, 8, 7, isHard);
-        case EnemyType::ArchDemon:                  return makeEnemy("Great Demon", 18, 9, 8, isHard);
-        case EnemyType::WanderingMerchant_Abyss:    return makeEnemy("Merchant (Abyss)", 12, 6, 6, isHard);
-        case EnemyType::DemonKingBoss:              return makeEnemy("Demon King (BOSS)", 24, 14, 10, isHard);
+        case EnemyType::EvilCreature:               return makeEnemy("Evil Creature", 12, 5, 3, isHard);
+        case EnemyType::DragonkinSoldier:           return makeEnemy("Dragon Soldier", 14, 8, 6, isHard);
+        case EnemyType::ArchDemon:                  return makeEnemy("Great Demon", 16, 8, 6, isHard);
+        case EnemyType::WanderingMerchant_Abyss:    return makeEnemy("Merchant (Abyss)", 12, 4, 6, isHard);
+        case EnemyType::DemonKingBoss:              return makeEnemy("Demon King (BOSS)", 40, 10, 7, isHard);
     }
 
     return makeEnemy("Unknown", 1, 0, 0, isHard);

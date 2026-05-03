@@ -263,22 +263,8 @@ void runAbyssEvent(int eventId, Player &player, bool isHard) {
             cout << "You gained " << gain << " Attack and " << gain << " Defense." << endl;
         }
     }
-
     // event 16
     else if (eventId == 16) {
-
-        cout << "Demon King!" << endl;
-        cout << "At last, you stand before the Demon King." << endl;
-        cout << "The time has come to face your greatest enemy." << endl;
-        Enemy enemy = createBoss(3, isHard); //Fixed
-        bool win = startBattle(player, enemy);      // Fixed
-
-        if (win) {
-            cout << "You defeated the Demon King!" << endl;
-            cout << "Your revenge is complete." << endl;
-        }
-        else {
-            cout << "You were defeated by the Demon King..." << endl;
-        }
+        runFoodCartEvent(player);
     }
 }
