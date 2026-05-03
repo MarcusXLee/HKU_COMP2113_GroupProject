@@ -35,14 +35,14 @@ Enemy createEnemy(EnemyType type, bool isHard)
         case EnemyType::FireSprite:                 return makeEnemy("Fire Spirit", 10, 5, 1, isHard);
         case EnemyType::Dragon:                     return makeEnemy("Dragon", 12,5,4, isHard);
         case EnemyType::WanderingMerchant_Mountain: return makeEnemy("Merchant (Mountain)", 10, 2, 4, isHard);
-        case EnemyType::RockGiantBoss:              return makeEnemy("Rock Giant (BOSS)", 24, 6, 4, isHard);
+        case EnemyType::RockGiantBoss:              return makeEnemy("Rock Giant (BOSS)", 24, 8, 4, isHard);
 
         // ===== 深渊 =====
         case EnemyType::EvilCreature:               return makeEnemy("Evil Creature", 12, 5, 3, isHard);
         case EnemyType::DragonkinSoldier:           return makeEnemy("Dragon Soldier", 12, 6, 4, isHard);
         case EnemyType::ArchDemon:                  return makeEnemy("Great Demon", 16, 6, 4, isHard);
         case EnemyType::WanderingMerchant_Abyss:    return makeEnemy("Merchant (Abyss)", 12, 2, 4, isHard);
-        case EnemyType::DemonKingBoss:              return makeEnemy("Demon King (BOSS)", 36, 9, 6, isHard);
+        case EnemyType::DemonKingBoss:              return makeEnemy("Demon King (BOSS)", 40, 10, 6, isHard);
     }
 
     return makeEnemy("Unknown", 1, 0, 0, isHard);

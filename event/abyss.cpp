@@ -127,7 +127,7 @@ void runAbyssEvent(int eventId, Player &player, bool isHard) {
             changePlayerMaxHP(player, maxHP);       // Fixed
             healPlayer(player, hp);                 // Fixed
         }
-        else if (kindness >= 5) {
+        else if (kindness >= 8) {
             cout << "Your actions are worthy of a great blessing." << endl;
 
             int r = rand() % 3;
@@ -164,7 +164,7 @@ void runAbyssEvent(int eventId, Player &player, bool isHard) {
                 cout << "Your Defense and HP are doubled!" << endl;
             }
         }
-        else if (kindness >= 0) {
+        else if (kindness >= 4) {
             cout << "You receive a modest blessing." << endl;
 
             int r = rand() % 3;
@@ -188,6 +188,10 @@ void runAbyssEvent(int eventId, Player &player, bool isHard) {
 
                 cout << "Your HP is doubled!" << endl;
             }
+        }
+        else if (kindness>=0)
+        {
+            cout << "The God of Good and Evil decides neither to bless or to punish you." << endl;
         }
         else {
             cout << "Your actions invite punishment instead of blessing." << endl;
