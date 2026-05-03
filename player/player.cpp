@@ -21,14 +21,14 @@ Player createPlayer(int difficulty) {
         p.hp = 30;
         p.attack = 7;
         p.defense = 3;
-        p.gold = 20;
+        p.gold = 10;
         p.kindness = 0;
     } else {
         p.maxHp = 24;
         p.hp = 24;
         p.attack = 5;
         p.defense = 2;
-        p.gold = 20;
+        p.gold = 10;
         p.kindness = 0;
     }
 
