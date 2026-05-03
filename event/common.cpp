@@ -27,12 +27,16 @@ void runBattleGodBlessingEvent(Player &player)
 
     if (choice == 1)
     {
-        cout << "You kneel and pray for strength to defeat your enemies and avenge the Demon King." << endl;
-        cout << "The God of Battle admires your courage and offers power in exchange for gold." << endl;
-
-        changePlayerGold(player, -20);      // Fixed: was changeGold
-        changePlayerAttack(player, +1);     // Fixed: was changeAttack
-        changePlayerDefense(player, +1);    // Fixed: was changeDefense
+        if (getPlayerGold(player) < 20) {
+            cout << "The gods do not accept empty promises. You need 20 gold. Nothing happens." << endl;
+        }
+        else{
+            cout << "You kneel and pray for strength to defeat your enemies and avenge the Demon King." << endl;
+            cout << "The God of Battle admires your courage and offers power in exchange for gold." << endl;
+            changePlayerGold(player, -20);      // Fixed: was changeGold
+            changePlayerAttack(player, +1);     // Fixed: was changeAttack
+            changePlayerDefense(player, +1);    // Fixed: was changeDefense
+        }
     }
     else if (choice == 2)
     {
@@ -113,21 +117,26 @@ void runMerchantEvent(Player &player, bool isHard) {
         cout << "3. Top Weapon (-25 gold, +3 Attack)" << endl;
 
         int subChoice = getValidEventChoice(1, 3);
-
-        if (subChoice == 1) {
-            changePlayerGold(player, -5);       // Fixed
-            changePlayerAttack(player, +1);     // Fixed
-            cout << "You bought a cheap weapon." << endl;
+        int cost = (subChoice == 1) ? 5 : (subChoice == 2) ? 15 : 25;
+        if (getPlayerGold(player) < cost) {
+            cout << "The merchant scoffs at you. 'You don't have enough gold!'" << endl;
         }
-        else if (subChoice == 2) {
-            changePlayerGold(player, -15);      // Fixed
-            changePlayerAttack(player, +2);     // Fixed
-            cout << "You bought a fine weapon." << endl;
-        }
-        else if (subChoice == 3) {
-            changePlayerGold(player, -25);      // Fixed
-            changePlayerAttack(player, +3);     // Fixed
-            cout << "You bought a top weapon." << endl;
+        else{
+            if (subChoice == 1) {
+                changePlayerGold(player, -5);       // Fixed
+                changePlayerAttack(player, +1);     // Fixed
+                cout << "You bought a cheap weapon." << endl;
+            }
+            else if (subChoice == 2) {
+                changePlayerGold(player, -15);      // Fixed
+                changePlayerAttack(player, +2);     // Fixed
+                cout << "You bought a fine weapon." << endl;
+            }
+            else if (subChoice == 3) {
+                changePlayerGold(player, -25);      // Fixed
+                changePlayerAttack(player, +3);     // Fixed
+                cout << "You bought a top weapon." << endl;
+            }
         }
     }
     else if (choice == 2) {
@@ -136,23 +145,28 @@ void runMerchantEvent(Player &player, bool isHard) {
         cout << "2. Fine Armor (-15 gold, +2 Defense)" << endl;
         cout << "3. Top Armor (-25 gold, +3 Defense)" << endl;
 
-        int subChoice;
-        cin >> subChoice;
-
-        if (subChoice == 1) {
-            changePlayerGold(player, -5);       // Fixed
-            changePlayerDefense(player, +1);    // Fixed
-            cout << "You bought a cheap armor." << endl;
+        int subChoice = getValidEventChoice(1, 3);
+        int cost = (subChoice == 1) ? 5 : (subChoice == 2) ? 15 : 25;
+        if (getPlayerGold(player) < cost) {
+            cout << "The merchant scoffs at you. 'You don't have enough gold!'" << endl;
         }
-        else if (subChoice == 2) {
-            changePlayerGold(player, -15);      // Fixed
-            changePlayerDefense(player, +2);    // Fixed
-            cout << "You bought a fine armor." << endl;
-        }
-        else if (subChoice == 3) {
-            changePlayerGold(player, -25);      // Fixed
-            changePlayerDefense(player, +3);    // Fixed
-            cout << "You bought a top armor." << endl;
+        else
+        {
+            if (subChoice == 1) {
+                changePlayerGold(player, -5);       // Fixed
+                changePlayerDefense(player, +1);    // Fixed
+                cout << "You bought a cheap armor." << endl;
+            }
+            else if (subChoice == 2) {
+                changePlayerGold(player, -15);      // Fixed
+                changePlayerDefense(player, +2);    // Fixed
+                cout << "You bought a fine armor." << endl;
+            }
+            else if (subChoice == 3) {
+                changePlayerGold(player, -25);      // Fixed
+                changePlayerDefense(player, +3);    // Fixed
+                cout << "You bought a top armor." << endl;
+            }
         }
     }
     else if (choice == 3) {
@@ -185,38 +199,45 @@ void runGamblingEvent(Player &player) {
     int choice = getValidEventChoice(1, 4);
 
     if (choice == 1) {
-        int r = rand() % 100;
-
-        if (r < 25) {
-            cout << "You lost 1 gold." << endl;
-            changePlayerGold(player, -1);       // Fixed
+        if (getPlayerGold(player) < 1) {
+            cout << "You don't even have 1 gold to bet! The dealer kicks you out." << endl;
         }
-        else if (r < 75) {
-            cout << "Nothing happens." << endl;
-        }
-        else {
-            cout << "You won 1 gold!" << endl;
-            changePlayerGold(player, +1);       // Fixed
+        else{
+            int r = rand() % 100;
+            if (r < 25) {
+                cout << "You lost 1 gold." << endl;
+                changePlayerGold(player, -1);       // Fixed
+            }
+            else if (r < 75) {
+                cout << "Nothing happens." << endl;
+            }
+            else {
+                cout << "You won 1 gold!" << endl;
+                changePlayerGold(player, +1);       // Fixed
+            }
         }
     }
     else if (choice == 2) {
-        int r = rand() % 100;
-
-        if (r < 25) {
-            cout << "You lost 5 gold." << endl;
-            changePlayerGold(player, -5);       // Fixed
+        if (getPlayerGold(player) < 5) {
+            cout << "You need at least 5 gold for a big bet! The dealer kicks you out." << endl;
         }
-        else if (r < 75) {
-            cout << "Nothing happens." << endl;
-        }
-        else {
-            cout << "You won 5 gold!" << endl;
-            changePlayerGold(player, +5);       // Fixed
+        else{
+            int r = rand() % 100;
+            if (r < 25) {
+                cout << "You lost 5 gold." << endl;
+                changePlayerGold(player, -5);       // Fixed
+            }
+            else if (r < 75) {
+                cout << "Nothing happens." << endl;
+            }
+            else {
+                cout << "You won 5 gold!" << endl;
+                changePlayerGold(player, +5);       // Fixed
+            }
         }
     }
     else if (choice == 3) {
         int r = rand() % 100;
-
         if (r < 25) {
             cout << "You lost all your gold." << endl;
             setPlayerGold(player, 0);           // Fixed: was loseAllGold (no such function)
@@ -251,39 +272,46 @@ void runFoodCartEvent(Player &player) {
     int choice = getValidEventChoice(1, 4);
 
     if (choice == 1) {
-        cout << "You enjoy a small snack." << endl;
-
-        changePlayerGold(player, -2);                                   // Fixed
-        healPlayer(player, getPlayerMaxHP(player) * 10 / 100);          // Fixed: int arithmetic
+        if (getPlayerGold(player) < 2) {
+            cout << "'No money, no food!' The vendor ignores you." << endl;
+        }
+        else{
+            cout << "You enjoy a small snack." << endl;
+            changePlayerGold(player, -2);                                  
+            healPlayer(player, getPlayerMaxHP(player) * 10 / 100);   
+        }
     }
     else if (choice == 2) {
-        cout << "You enjoy a full meal." << endl;
-
-        changePlayerGold(player, -5);                                   // Fixed
-        healPlayer(player, getPlayerMaxHP(player) * 30 / 100);          // Fixed
+        if (getPlayerGold(player) < 5) {
+            cout << "'No money, no food!' The vendor ignores you." << endl;
+        }
+        else{
+            cout << "You enjoy a full meal." << endl;
+            changePlayerGold(player, -5);                                   // Fixed
+            healPlayer(player, getPlayerMaxHP(player) * 30 / 100);
+        }
     }
     else if (choice == 3) {
-        cout << "You try the magical food..." << endl;
-
-        changePlayerGold(player, -15);                                  // Fixed
-
-        int r = rand() % 2;
-
-        if (r == 0) {
-            cout << "You lost some Attack but gained great Defense!" << endl;
-
-            int loss = rand() % 4 + 1;  // 1~4
-
-            changePlayerAttack(player, -loss);          // Fixed
-            changePlayerDefense(player, 2 * loss);      // Fixed
+        if (getPlayerGold(player) < 15) {
+            cout << "'No money, no food!' The vendor ignores you." << endl;
         }
-        else {
-            cout << "You lost some Defense but gained great Attack!" << endl;
-
-            int loss = rand() % 4 + 1;
-
-            changePlayerDefense(player, -loss);         // Fixed
-            changePlayerAttack(player, 2 * loss);       // Fixed
+        else{
+            cout << "You try the magical food..." << endl;
+            changePlayerGold(player, -15);
+            
+            int r = rand() % 2;
+            if (r == 0) {
+                cout << "You lost some Attack but gained great Defense!" << endl;
+                int loss = rand() % 4 + 1;
+                changePlayerAttack(player, -loss);
+                changePlayerDefense(player, 2 * loss);
+            } 
+            else {
+                cout << "You lost some Defense but gained great Attack!" << endl;
+                int loss = rand() % 4 + 1;
+                changePlayerDefense(player, -loss);
+                changePlayerAttack(player, 2 * loss);
+            }
         }
     }
     else if (choice == 4) {

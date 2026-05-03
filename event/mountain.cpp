@@ -99,23 +99,23 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
 
         // Process Choice 1: Submission and payment
         if (choice == 1) {
-            
-            // Output narrative text
-            cout << "You kneel before the statue and offer your gold." << endl;
-
-            // Apply transaction
-            changePlayerGold(player, -20);      // Deduct funds
-            changePlayerDefense(player, +3);    // Grant defensive blessing
+            if (getPlayerGold(player) < 20) {
+                cout << "The God of the Mountain rejects your empty pockets. You need 20 gold. Nothing happens." << endl;
+            }
+            else{
+                // Output narrative text
+                cout << "You kneel before the statue and offer your gold." << endl;
+                changePlayerGold(player, -20);      // Deduct funds
+                changePlayerDefense(player, +3);    // Grant defensive blessing
+            }
             
         }
         // Process Choice 2: Defiance and curse
         else if (choice == 2) {
-            
             // Output narrative text
             cout << "You believe gods are only illusions." << endl;
             cout << "Unlike the God of Battle, the God of the Mountain is not merciful." << endl;
             cout << "You are cursed for your arrogance." << endl;
-
             // Apply curse penalty
             changePlayerAttack(player, -1);     // Reduce offensive power
             
@@ -192,15 +192,17 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
         }
         // Process Choice 2: Peaceful path
         else if (choice == 2) {
-            
-            // Output narrative text
-            cout << "You trade gold for the spirit's flame." << endl;
-
-            // Apply transaction and stat boosts
-            changePlayerGold(player, -10);     // Deduct funds
-            changePlayerKindness(player, +1);  // Increase morality
-            changePlayerAttack(player, +1);    // Increase offensive power
-            
+            if (getPlayerGold(player) < 10) {
+                cout << "The Fire Spirit notices your empty coin pouch and refuses to trade. Nothing happens." << endl;
+            }
+            else{
+                // Output narrative text
+                cout << "You trade gold for the spirit's flame." << endl;
+                // Apply transaction and stat boosts
+                changePlayerGold(player, -10);     // Deduct funds
+                changePlayerKindness(player, +1);  // Increase morality
+                changePlayerAttack(player, +1);    // Increase offensive power
+            }
         }
     }
     else if (eventId == 13) {
