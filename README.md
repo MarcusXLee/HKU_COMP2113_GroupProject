@@ -1,10 +1,15 @@
 The Vengeful Adventurer ⚔️
 
 Team Members
+
 Qu Cheng 3036403703
+
 Zhang Yiwen 3036588890
+
 Yu Zhenxiang 3036588553
+
 LI Xinye 3036483832
+
 Shi Xiang’er 3036397136
 
 Application Description
@@ -56,7 +61,9 @@ Contribution Note
 
 Although the GitHub Contributors Graph may show an uneven distribution of added lines, this is largely because the member responsible for the event module implemented a very large amount of event text and narrative content, which significantly increased the total line count in that part of the project.
 After internal review within the group, we confirm that each member's pure code contribution exceeds 15%, and all team members agree with this assessment without objection.
+
 Compilation and Execution Instructions
+
 We have provided a Makefile to handle the build process automatically. Enter these bash commands when you are in our repository in the terminal.
 Clean previous builds:
 make clean
