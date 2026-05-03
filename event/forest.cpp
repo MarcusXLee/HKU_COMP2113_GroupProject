@@ -330,15 +330,10 @@ void runForestEvent(int eventId, Player &player, bool isHard) {
     // event 14
     else if (eventId == 14) {
 
-        cout << "Guardian of the Forest" << endl;
-        cout << "To leave the forest and move forward," << endl;
-        cout << "you must defeat the guardian of the forest — the Treant." << endl;
-
-        cout << "Prepare for battle!" << endl;
-
-        // Fixed: forest_boss_id undefined; use createBoss(1) = Dryad (forest boss)
-        Enemy enemy = createBoss(1,isHard);
-        startBattle(player, enemy);                 // Fixed
+        cout << "Fierce Bear!" << endl;
+        cout << "A massive brown bear blocks your path. It looks hungry!" << endl;
+        Enemy enemy = createEnemy(EnemyType::BrownBear, isHard);
+        startBattle(player, enemy);               // Fixed
     }
 
     // event 15

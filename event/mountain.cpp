@@ -263,46 +263,10 @@ void runMountainEvent(int eventId, Player &player, bool isHard) {
         }
     }
     else if (eventId == 14) {
-
-        // Display epic narrative text for the boss encounter
-        cout << "=====================================" << endl;
-        cout << "             STONE GIANT             " << endl;
-        cout << "=====================================" << endl;
-        cout << "To leave the mountains and descend into the abyss," << endl;
-        cout << "you must defeat the guardian of the Demon King — the Stone Giant." << endl;
-        cout << "Prepare for battle!" << endl;
-        cout << "=====================================" << endl;
-
-        // Instantiate the Chapter Boss
-        Enemy enemy = createBoss(2,isHard);   
-        
-        // Trigger the boss battle and capture the boolean result (Win/Loss)
-        bool win = startBattle(player, enemy);       
-
-        // Evaluate the result of the battle
-        if (win) {
-            
-            // Player won the boss fight
-            cout << "=====================================" << endl;
-            cout << "You defeated the Stone Giant!" << endl;
-            cout << "The path to the abyss is now open." << endl;
-            cout << "=====================================" << endl;
-            
-            // NOTE FOR INTEGRATION: 
-            // The GameManager should detect this state and update currentChapter.
-            
-        } else {
-            
-            // Player lost the boss fight
-            cout << "=====================================" << endl;
-            cout << "You were defeated by the Stone Giant..." << endl;
-            cout << "Your journey ends here in the freezing mountains." << endl;
-            cout << "=====================================" << endl;
-            
-            // NOTE FOR INTEGRATION:
-            // The GameManager will detect player HP <= 0 and trigger the Game Over sequence.
-            
-        }
+        cout << "Griffin Ambush!" << endl;
+        cout << "Another wild griffin dives at you from the cliffs!" << endl;
+        Enemy enemy = createEnemy(EnemyType::Griffon, isHard);
+        startBattle(player, enemy);
     }
     else {
         runMerchantEvent(player,isHard); 

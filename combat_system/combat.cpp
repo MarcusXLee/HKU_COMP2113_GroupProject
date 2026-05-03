@@ -21,6 +21,10 @@ bool startBattle(Player &player, Enemy &enemy, UIManager &ui)
         int choice = ui.getBattleChoice(); // 1.Fight 2.Flight
 
         if (choice == 2) { // Flee
+            if (enemy.name.find("(BOSS)") != std::string::npos) {
+                cout << "[!] The sheer presence of " << enemy.name << " freezes you in place. There is nowhere to run!" << endl;
+                continue; // No flight in BOSS fight!
+            }
             int penalty = player.maxHp / 5;
             player.hp -= penalty;
             cout << "You fled and lost " << penalty << " HP." << endl;
