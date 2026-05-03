@@ -42,7 +42,7 @@ Enemy createEnemy(EnemyType type, bool isHard)
         case EnemyType::DragonkinSoldier:           return makeEnemy("Dragon Soldier", 12, 6, 4, isHard);
         case EnemyType::ArchDemon:                  return makeEnemy("Great Demon", 16, 6, 4, isHard);
         case EnemyType::WanderingMerchant_Abyss:    return makeEnemy("Merchant (Abyss)", 12, 2, 4, isHard);
-        case EnemyType::DemonKingBoss:              return makeEnemy("Demon King (BOSS)", 40, 10, 6, isHard);
+        case EnemyType::DemonKingBoss:              return makeEnemy("Demon King (BOSS)", 36, 10, 6, isHard);
     }
 
     return makeEnemy("Unknown", 1, 0, 0, isHard);

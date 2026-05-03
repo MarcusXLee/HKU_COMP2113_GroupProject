@@ -164,7 +164,7 @@ void runAbyssEvent(int eventId, Player &player, bool isHard) {
                 cout << "Your Defense and HP are doubled!" << endl;
             }
         }
-        else if (kindness >= 4) {
+        else if (kindness >= 3) {
             cout << "You receive a modest blessing." << endl;
 
             int r = rand() % 3;
