@@ -1,6 +1,6 @@
 The Vengeful Adventurer ⚔️
 
-Team Members(group 137)
+👥Team Members(group 137)
 
 Qu Cheng 3036403703
 
@@ -12,7 +12,7 @@ LI Xinye 3036483832
 
 Shi Xiang’er 3036397136
 
-Application Description
+📝Application Description
 
 "The Vengeful Adventurer" is a sophisticated text-based RPG developed in C++. The narrative follows a survivor seeking retribution against the Demon King across three distinct procedural chapters: The Forest, The Mountain, and The Abyss.
 The project goes beyond a simple story by implementing a balanced combat engine, a persistent save/load system, and a "Karma" morality mechanic that dynamically scales the game's difficulty based on the player's ethical choices.
@@ -54,17 +54,18 @@ Additional Technical Highlights
 
 •	Karma Influence: The Kindness stat is more than a label; it mathematically scales the final boss's atk and def values, rewarding virtuous players and punishing evil ones.
 •	Defensive Coding: We use std::max and std::min throughout player.cpp and combat.cpp to ensure HP never exceeds its max or falls below zero, and that damage is always at least 1 point.
-Non-Standard C/C++ Libraries
+
+❌Non-Standard C/C++ Libraries
 None. The project is built entirely using the C++11 Standard Library to ensure native compatibility across Unix/Linux environments.
 
 Contribution Note
 
-Although the GitHub Contributors Graph may show an uneven distribution of added lines, this is largely because the member responsible for the event module implemented a very large amount of event text and narrative content, which significantly increased the total line count in that part of the project.
+🔔Although the GitHub Contributors Graph may show an uneven distribution of added lines, this is largely because the member responsible for the event module implemented a very large amount of event text and narrative content, which significantly increased the total line count in that part of the project.
 After internal review within the group, we confirm that each member's pure code contribution exceeds 15%, and all team members agree with this assessment without objection.
 
 Compilation and Execution Instructions
 
-We have provided a Makefile to handle the build process automatically. Enter these bash commands when you are in our repository in the terminal.
+🧭We have provided a Makefile to handle the build process automatically. Enter these bash commands when you are in our repository in the terminal.
 Clean previous builds:
 make clean
 
@@ -73,4 +74,6 @@ make
 
 Run the game:
 ./vengeful_adventurer
+
+❗️Note that the game should be operated in Linux or MacOS environment, as Windows system might not support the title art.
 
